@@ -1,0 +1,134 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resources",
+  "info": {
+    "singularName": "resource",
+    "pluralName": "resources",
+    "displayName": "Resources",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "EnglishTitle": {
+      "type": "string",
+      "required": true
+    },
+    "KhmerTitle": {
+      "type": "string"
+    },
+    "EnglishDescription": {
+      "type": "richtext"
+    },
+    "KhmerDescription": {
+      "type": "richtext"
+    },
+    "eBook": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "FeaturedImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "EnglishTitle",
+      "required": true
+    },
+    "PurchaseLink": {
+      "type": "string"
+    },
+    "AudioBookLink": {
+      "type": "string"
+    },
+    "PublishedDate": {
+      "type": "date"
+    },
+    "IsFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "type": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::resources-type.resources-type",
+      "inversedBy": "resources"
+    },
+    "authors": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::author.author",
+      "inversedBy": "resources"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "resources"
+    },
+    "publishers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::publisher.publisher",
+      "inversedBy": "resources"
+    },
+    "VideoLink": {
+      "type": "string"
+    },
+    "ExternalLink": {
+      "type": "string"
+    },
+    "eBookDownloads": {
+      "type": "integer",
+      "default": 0
+    },
+    "AudioBookDownloads": {
+      "type": "integer",
+      "default": 0
+    },
+    "VideoClicks": {
+      "type": "integer",
+      "default": 0
+    },
+    "ExternalLinkClicks": {
+      "type": "integer",
+      "default": 0
+    },
+    "PurchaseLinkClick": {
+      "type": "integer",
+      "default": 0
+    },
+    "VideoLessons": {
+      "type": "string"
+    },
+    "VideoLessonsClicks": {
+      "type": "integer",
+      "default": 0
+    },
+    "EnglishKindleLink": {
+      "type": "string"
+    },
+    "EnglishPurchaseLink": {
+      "type": "string"
+    },
+    "EnglishKindleClicks": {
+      "type": "integer",
+      "default": 0
+    },
+    "EnglishPurchaseClicks": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

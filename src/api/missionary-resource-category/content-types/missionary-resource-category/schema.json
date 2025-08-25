@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "missionary_resource_categories",
+  "info": {
+    "singularName": "missionary-resource-category",
+    "pluralName": "missionary-resource-categories",
+    "displayName": "Missionary Resource Category"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "Name"
+    },
+    "missionary_resources": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::missionary-resource.missionary-resource",
+      "mappedBy": "missionary_resource_categories"
+    }
+  }
+}
