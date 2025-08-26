@@ -1,8 +1,8 @@
-# Strapi example
+# Strapi with Cloudflare R2 Media Storage and Backup
 
-This example deploys self-hosted version of [Strapi](https://strapi.io/). Internally it uses a PostgreSQL database to store the data.
+This example deploys self-hosted version of [Strapi](https://strapi.io/). Internally it uses a PostgreSQL database to store the data and Cloudflare R2 for media storage. Includes a weekly database backup to Cloudflare R2 as well ([source here](https://github.com/sungkhum/postgres-r2-backups)).
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/strapi?referralCode=milo)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/strapi-with-cloudflare-r2?referralCode=6EnXto&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ## ✨ Features
 
