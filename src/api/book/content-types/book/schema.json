@@ -1,0 +1,69 @@
+{
+  "kind": "collectionType",
+  "collectionName": "books",
+  "info": {
+    "singularName": "book",
+    "pluralName": "books",
+    "displayName": "Books",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "title_en": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "num_chapters": {
+      "type": "integer"
+    },
+    "is_featured": {
+      "type": "boolean"
+    },
+    "is_new_arrival": {
+      "type": "boolean"
+    },
+    "ebook_url": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "chapters": {
+      "type": "component",
+      "repeatable": true,
+      "component": "audio-books.chapter"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "books"
+    }
+  }
+}

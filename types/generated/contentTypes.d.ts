@@ -369,34 +369,38 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
-  collectionName: 'authors';
+export interface ApiBookBook extends Struct.CollectionTypeSchema {
+  collectionName: 'books';
   info: {
     description: '';
-    displayName: 'Author';
-    pluralName: 'authors';
-    singularName: 'author';
+    displayName: 'Books';
+    pluralName: 'books';
+    singularName: 'book';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
+    author: Schema.Attribute.String;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    chapters: Schema.Attribute.Component<'audio-books.chapter', true>;
+    cover: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    duration: Schema.Attribute.String;
+    ebook_url: Schema.Attribute.Media<'files'>;
+    is_featured: Schema.Attribute.Boolean;
+    is_new_arrival: Schema.Attribute.Boolean;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::author.author'
-    > &
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::book.book'> &
       Schema.Attribute.Private;
-    Name: Schema.Attribute.String;
+    num_chapters: Schema.Attribute.Integer;
     publishedAt: Schema.Attribute.DateTime;
-    resources: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::resource.resource'
-    >;
-    slug: Schema.Attribute.UID<'Name'>;
+    subtitle: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    title_en: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -415,245 +419,19 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    books: Schema.Attribute.Relation<'oneToMany', 'api::book.book'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    EnglishName: Schema.Attribute.String;
-    KhmerName: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::category.category'
     > &
       Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    name_en: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    resources: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::resource.resource'
-    >;
-    slug: Schema.Attribute.UID;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiMissionaryResourceCategoryMissionaryResourceCategory
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'missionary_resource_categories';
-  info: {
-    displayName: 'Missionary Resource Category';
-    pluralName: 'missionary-resource-categories';
-    singularName: 'missionary-resource-category';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::missionary-resource-category.missionary-resource-category'
-    > &
-      Schema.Attribute.Private;
-    missionary_resources: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::missionary-resource.missionary-resource'
-    >;
-    Name: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<'Name'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiMissionaryResourceMissionaryResource
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'missionary_resources';
-  info: {
-    description: '';
-    displayName: 'Missionary Resources';
-    pluralName: 'missionary-resources';
-    singularName: 'missionary-resource';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    AudioLink: Schema.Attribute.String;
-    AudioLinkClick: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    Author: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    Description: Schema.Attribute.Text;
-    Download: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    DownloadClick: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    ExternalLink: Schema.Attribute.String;
-    ExternalLinkClick: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::missionary-resource.missionary-resource'
-    > &
-      Schema.Attribute.Private;
-    missionary_resource_categories: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::missionary-resource-category.missionary-resource-category'
-    >;
-    publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<'Title'> & Schema.Attribute.Required;
-    Title: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiPublisherPublisher extends Struct.CollectionTypeSchema {
-  collectionName: 'publishers';
-  info: {
-    description: '';
-    displayName: 'Publisher';
-    pluralName: 'publishers';
-    singularName: 'publisher';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    EnglishName: Schema.Attribute.String;
-    GoogleMapLink: Schema.Attribute.String;
-    KhmerName: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::publisher.publisher'
-    > &
-      Schema.Attribute.Private;
-    PhoneNumber: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    resources: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::resource.resource'
-    >;
-    slug: Schema.Attribute.UID<'EnglishName'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    Website: Schema.Attribute.String;
-  };
-}
-
-export interface ApiResourceResource extends Struct.CollectionTypeSchema {
-  collectionName: 'resources';
-  info: {
-    description: '';
-    displayName: 'Resources';
-    pluralName: 'resources';
-    singularName: 'resource';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    AudioBookDownloads: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>;
-    AudioBookLink: Schema.Attribute.String;
-    authors: Schema.Attribute.Relation<'manyToMany', 'api::author.author'>;
-    categories: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::category.category'
-    >;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    eBook: Schema.Attribute.Media<'files'>;
-    eBookDownloads: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    EnglishDescription: Schema.Attribute.RichText;
-    EnglishKindleClicks: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>;
-    EnglishKindleLink: Schema.Attribute.String;
-    EnglishPurchaseClicks: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>;
-    EnglishPurchaseLink: Schema.Attribute.String;
-    EnglishTitle: Schema.Attribute.String & Schema.Attribute.Required;
-    ExternalLink: Schema.Attribute.String;
-    ExternalLinkClicks: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>;
-    FeaturedImage: Schema.Attribute.Media<'images'>;
-    IsFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    KhmerDescription: Schema.Attribute.RichText;
-    KhmerTitle: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::resource.resource'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    PublishedDate: Schema.Attribute.Date;
-    publishers: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::publisher.publisher'
-    >;
-    PurchaseLink: Schema.Attribute.String;
-    PurchaseLinkClick: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    slug: Schema.Attribute.UID<'EnglishTitle'> & Schema.Attribute.Required;
-    type: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::resources-type.resources-type'
-    >;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    VideoClicks: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    VideoLessons: Schema.Attribute.String;
-    VideoLessonsClicks: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>;
-    VideoLink: Schema.Attribute.String;
-  };
-}
-
-export interface ApiResourcesTypeResourcesType
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'resources_types';
-  info: {
-    description: '';
-    displayName: 'Resources Type';
-    pluralName: 'resources-types';
-    singularName: 'resources-type';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    EnglishName: Schema.Attribute.String;
-    EnglishPluralName: Schema.Attribute.String;
-    KhmerName: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::resources-type.resources-type'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    resources: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::resource.resource'
-    >;
-    slug: Schema.Attribute.UID;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1169,13 +947,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::author.author': ApiAuthorAuthor;
+      'api::book.book': ApiBookBook;
       'api::category.category': ApiCategoryCategory;
-      'api::missionary-resource-category.missionary-resource-category': ApiMissionaryResourceCategoryMissionaryResourceCategory;
-      'api::missionary-resource.missionary-resource': ApiMissionaryResourceMissionaryResource;
-      'api::publisher.publisher': ApiPublisherPublisher;
-      'api::resource.resource': ApiResourceResource;
-      'api::resources-type.resources-type': ApiResourcesTypeResourcesType;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

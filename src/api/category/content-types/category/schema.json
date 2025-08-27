@@ -11,20 +11,17 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "EnglishName": {
+    "name": {
       "type": "string"
     },
-    "slug": {
-      "type": "uid"
-    },
-    "KhmerName": {
+    "name_en": {
       "type": "string"
     },
-    "resources": {
+    "books": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::resource.resource",
-      "mappedBy": "categories"
+      "relation": "oneToMany",
+      "target": "api::book.book",
+      "mappedBy": "category"
     }
   }
 }
