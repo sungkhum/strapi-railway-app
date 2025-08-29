@@ -54,17 +54,16 @@
         "images"
       ]
     },
+    "chapters": {
+      "type": "component",
+      "repeatable": true,
+      "component": "audio-books.chapter"
+    },
     "category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::category.category",
       "inversedBy": "books"
-    },
-    "chapters": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::chapter.chapter",
-      "mappedBy": "book"
     }
   }
 }
