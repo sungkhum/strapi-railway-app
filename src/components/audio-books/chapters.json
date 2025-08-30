@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_audio_books_chapters",
+  "info": {
+    "displayName": "Chapter",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "audio_file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "audios"
+      ]
+    },
+    "audio_url": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
