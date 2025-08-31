@@ -13,16 +13,15 @@
   "pluginOptions": {},
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "subtitle": {
       "type": "string"
     },
-    "author": {
-      "type": "string"
-    },
     "description": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "duration": {
       "type": "string"
@@ -36,7 +35,7 @@
     "is_new_arrival": {
       "type": "boolean"
     },
-    "ebook_url": {
+    "ebook": {
       "type": "media",
       "multiple": false,
       "required": false,
@@ -47,16 +46,24 @@
     "cover": {
       "type": "media",
       "multiple": false,
-      "required": false,
+      "required": true,
       "allowedTypes": [
         "images"
       ]
+    },
+    "purchase_url": {
+      "type": "string"
     },
     "category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::category.category",
       "inversedBy": "books"
+    },
+    "authors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::author.author"
     },
     "chapters": {
       "type": "component",
