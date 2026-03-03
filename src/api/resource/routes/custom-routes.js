@@ -1,5 +1,5 @@
-module.exports = {
-    routes: [
+const routes = process.env.ENABLE_KHMER_SEARCH === 'true'
+  ? [
       {
         method: 'GET',
         path: '/resources/khmer-search',
@@ -9,5 +9,7 @@ module.exports = {
           policies: [],
         },
       },
-    ],
-  };
+    ]
+  : [];
+
+module.exports = { routes };

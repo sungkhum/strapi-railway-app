@@ -5,6 +5,8 @@
  * by removing zero-width space characters (U+200B)
  */
 async function up(knex) {
+  if (process.env.ENABLE_KHMER_SEARCH !== 'true') return;
+
   // Create the normalize_khmer_search function
   return knex.raw(`
     CREATE OR REPLACE FUNCTION normalize_khmer_search(input_text TEXT) 
