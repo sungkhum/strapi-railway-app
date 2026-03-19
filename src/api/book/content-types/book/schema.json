@@ -23,6 +23,9 @@
       "type": "text",
       "required": true
     },
+    "description_en": {
+      "type": "text"
+    },
     "duration": {
       "type": "string"
     },
@@ -69,6 +72,12 @@
       "type": "component",
       "component": "audio-books.chapters",
       "repeatable": true
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "books"
     }
   }
 }
