@@ -78,6 +78,20 @@
       "relation": "manyToMany",
       "target": "api::tag.tag",
       "inversedBy": "books"
+    },
+    "views": {
+      "type": "biginteger",
+      "default": "0"
+    },
+    "audio_plays": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
+    },
+    "book_opens": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
     }
   }
 }
