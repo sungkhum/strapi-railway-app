@@ -17,6 +17,7 @@ module.exports = createCoreController("api::book.book", ({ strapi }) => ({
     const updated = await strapi.documents("api::book.book").update({
       documentId,
       data: { views: (Number(book.views) || 0) + 1 },
+      status: "published",
     });
 
     ctx.body = { views: updated.views };
@@ -32,6 +33,7 @@ module.exports = createCoreController("api::book.book", ({ strapi }) => ({
     const updated = await strapi.documents("api::book.book").update({
       documentId,
       data: { audio_plays: (Number(book.audio_plays) || 0) + 1 },
+      status: "published",
     });
 
     ctx.body = { audio_plays: updated.audio_plays };
@@ -47,6 +49,7 @@ module.exports = createCoreController("api::book.book", ({ strapi }) => ({
     const updated = await strapi.documents("api::book.book").update({
       documentId,
       data: { book_opens: (Number(book.book_opens) || 0) + 1 },
+      status: "published",
     });
 
     ctx.body = { book_opens: updated.book_opens };

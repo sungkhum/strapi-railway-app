@@ -6,7 +6,7 @@ module.exports = {
       method: "POST",
       path: "/books/:documentId/track-view",
       handler: "api::book.book.trackView",
-	config: {
+      config: {
         auth: false,
       },
     },
@@ -14,7 +14,7 @@ module.exports = {
       method: "POST",
       path: "/books/:documentId/track-audio-play",
       handler: "api::book.book.trackAudioPlay",
-	config: {
+      config: {
         auth: false,
       },
     },
@@ -22,7 +22,7 @@ module.exports = {
       method: "POST",
       path: "/books/:documentId/track-book-open",
       handler: "api::book.book.trackBookOpen",
-	config: {
+      config: {
         auth: false,
       },
     },
