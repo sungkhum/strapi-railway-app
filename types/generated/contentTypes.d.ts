@@ -413,7 +413,13 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    audio_plays: Schema.Attribute.BigInteger &
+      Schema.Attribute.Private &
+      Schema.Attribute.DefaultTo<'0'>;
     authors: Schema.Attribute.Relation<'oneToMany', 'api::author.author'>;
+    book_opens: Schema.Attribute.BigInteger &
+      Schema.Attribute.Private &
+      Schema.Attribute.DefaultTo<'0'>;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     chapters: Schema.Attribute.Component<'audio-books.chapters', true>;
     cover: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
@@ -438,6 +444,7 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    views: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
   };
 }
 
