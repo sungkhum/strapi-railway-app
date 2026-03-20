@@ -26,5 +26,13 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "POST",
+      path: "/books/:documentId/track-download",
+      handler: "api::book.book.trackDownload",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };
