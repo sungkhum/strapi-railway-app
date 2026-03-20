@@ -54,4 +54,20 @@ module.exports = createCoreController("api::book.book", ({ strapi }) => ({
 
     ctx.body = { book_opens: updated.book_opens };
   },
+
+  async trackDownload(ctx) {
+    const { documentId } = ctx.params;
+    const book = await strapi
+      .documents("api::book.book")
+      .findOne({ documentId });
+    if (!book) return ctx.notFound("Book not found");
+
+    const updated = await strapi.documents("api::book.book").update({
+      documentId,
+      data: { downloads: (Number(book.downloads) || 0) + 1 },
+      status: "published",
+    });
+
+    ctx.body = { downloads: updated.downloads };
+  },
 }));
