@@ -92,6 +92,11 @@
       "type": "biginteger",
       "private": true,
       "default": "0"
+    },
+    "downloads": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
     }
   }
 }
