@@ -57,6 +57,9 @@
     "purchase_url": {
       "type": "string"
     },
+    "youtube_playlist": {
+      "type": "string"
+    },
     "category": {
       "type": "relation",
       "relation": "manyToOne",
