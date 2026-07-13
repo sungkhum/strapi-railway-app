@@ -6,68 +6,77 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
+const BOOK_TABLE = "books";
+
+async function incrementPublishedCounter(strapi, documentId, field) {
+  const query = strapi.db
+    .connection(BOOK_TABLE)
+    .where({ document_id: documentId })
+    .whereNotNull("updated_at");
+
+  // PostgreSQL supports RETURNING; use it to avoid a second round-trip.
+  const client = String(strapi.db.connection?.client?.config?.client || "");
+  if (client.includes("pg")) {
+    const rows = await query.increment(field, 1).returning([field]);
+    if (!rows?.length) return null;
+    return Number(rows[0][field]) || 0;
+  }
+
+  const affected = await query.increment(field, 1);
+  if (!affected) return null;
+
+  const row = await strapi.db
+    .connection(BOOK_TABLE)
+    .select(field)
+    .where({ document_id: documentId })
+    .whereNotNull("updated_at")
+    .first();
+
+  return row ? Number(row[field]) || 0 : null;
+}
+
 module.exports = createCoreController("api::book.book", ({ strapi }) => ({
   async trackView(ctx) {
     const { documentId } = ctx.params;
-    const book = await strapi
-      .documents("api::book.book")
-      .findOne({ documentId });
-    if (!book) return ctx.notFound("Book not found");
+    const views = await incrementPublishedCounter(strapi, documentId, "views");
+    if (views === null) return ctx.notFound("Book not found");
 
-    const updated = await strapi.documents("api::book.book").update({
-      documentId,
-      data: { views: (Number(book.views) || 0) + 1 },
-      status: "published",
-    });
-
-    ctx.body = { views: updated.views };
+    ctx.body = { views };
   },
 
   async trackAudioPlay(ctx) {
     const { documentId } = ctx.params;
-    const book = await strapi
-      .documents("api::book.book")
-      .findOne({ documentId });
-    if (!book) return ctx.notFound("Book not found");
-
-    const updated = await strapi.documents("api::book.book").update({
+    const audio_plays = await incrementPublishedCounter(
+      strapi,
       documentId,
-      data: { audio_plays: (Number(book.audio_plays) || 0) + 1 },
-      status: "published",
-    });
+      "audio_plays",
+    );
+    if (audio_plays === null) return ctx.notFound("Book not found");
 
-    ctx.body = { audio_plays: updated.audio_plays };
+    ctx.body = { audio_plays };
   },
 
   async trackBookOpen(ctx) {
     const { documentId } = ctx.params;
-    const book = await strapi
-      .documents("api::book.book")
-      .findOne({ documentId });
-    if (!book) return ctx.notFound("Book not found");
-
-    const updated = await strapi.documents("api::book.book").update({
+    const book_opens = await incrementPublishedCounter(
+      strapi,
       documentId,
-      data: { book_opens: (Number(book.book_opens) || 0) + 1 },
-      status: "published",
-    });
+      "book_opens",
+    );
+    if (book_opens === null) return ctx.notFound("Book not found");
 
-    ctx.body = { book_opens: updated.book_opens };
+    ctx.body = { book_opens };
   },
 
   async trackDownload(ctx) {
     const { documentId } = ctx.params;
-    const book = await strapi
-      .documents("api::book.book")
-      .findOne({ documentId });
-    if (!book) return ctx.notFound("Book not found");
-
-    const updated = await strapi.documents("api::book.book").update({
+    const downloads = await incrementPublishedCounter(
+      strapi,
       documentId,
-      data: { downloads: (Number(book.downloads) || 0) + 1 },
-      status: "published",
-    });
+      "downloads",
+    );
+    if (downloads === null) return ctx.notFound("Book not found");
 
-    ctx.body = { downloads: updated.downloads };
+    ctx.body = { downloads };
   },
 }));
