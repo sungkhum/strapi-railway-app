@@ -420,7 +420,10 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     book_opens: Schema.Attribute.BigInteger &
       Schema.Attribute.Private &
       Schema.Attribute.DefaultTo<'0'>;
-    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::category.category'
+    >;
     chapters: Schema.Attribute.Component<'audio-books.chapters', true>;
     cover: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -448,6 +451,7 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     views: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
+    youtube_playlist: Schema.Attribute.String;
   };
 }
 
@@ -463,7 +467,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    books: Schema.Attribute.Relation<'oneToMany', 'api::book.book'>;
+    books: Schema.Attribute.Relation<'manyToMany', 'api::book.book'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
