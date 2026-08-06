@@ -1,6 +1,8 @@
 "use strict";
 
 const BOOK_UID = "api::book.book";
+const ANALYTICS_EVENT_UID = "api::analytics-event.analytics-event";
+const FIRST_PARTY_DAYS = 30;
 
 const DISTRIBUTION_BUCKETS = [
   { key: "none", label: "No signal", min: 0, max: 0 },
@@ -115,6 +117,227 @@ const aggregateSegment = (key, label, books) => {
     engagement,
     engagementPerBook: average(engagement, books.length),
     depthRate: percentage(downstreamActions, views),
+  };
+};
+
+const isoDay = (value) => new Date(value).toISOString().slice(0, 10);
+
+const createTrend = (now) => {
+  const result = [];
+  for (let offset = FIRST_PARTY_DAYS - 1; offset >= 0; offset -= 1) {
+    const date = new Date(now);
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCDate(date.getUTCDate() - offset);
+    result.push({
+      date: isoDay(date),
+      bookViews: 0,
+      audioStarts: 0,
+      ebookOpens: 0,
+      devotionalViews: 0,
+      listeningSeconds: 0,
+    });
+  }
+  return result;
+};
+
+const aggregateFirstPartyEvents = (
+  events,
+  books,
+  now = new Date(),
+  truncated = false
+) => {
+  const trend = createTrend(now);
+  const trendByDate = new Map(trend.map((day) => [day.date, day]));
+  const activeInstallations = new Set();
+  const listeners = new Set();
+  const ebookReaders = new Set();
+  const devotionalReaders = new Set();
+  const bookStats = new Map();
+  const totals = {
+    events: 0,
+    activeUsers: 0,
+    bookViews: 0,
+    audioStarts: 0,
+    audioCompletions: 0,
+    ebookOpens: 0,
+    ebookCompletions: 0,
+    devotionalViews: 0,
+    devotionalEngagements: 0,
+    downloadStarts: 0,
+    downloadCompletions: 0,
+    downloadFailures: 0,
+    searches: 0,
+    searchResultOpens: 0,
+    notificationOpens: 0,
+    bookmarks: 0,
+    purchaseClicks: 0,
+    listeningSeconds: 0,
+    listeningHours: 0,
+    listeners: 0,
+    ebookReaders: 0,
+    devotionalReaders: 0,
+  };
+
+  events.forEach((event) => {
+    totals.events += 1;
+    if (event.installationIdHash) {
+      activeInstallations.add(event.installationIdHash);
+    }
+
+    const day = trendByDate.get(isoDay(event.occurredAt));
+    const bookId = event.bookDocumentId;
+    const book = bookId
+      ? bookStats.get(bookId) || {
+          documentId: bookId,
+          views: 0,
+          audioStarts: 0,
+          audioCompletions: 0,
+          ebookOpens: 0,
+          ebookCompletions: 0,
+          downloadCompletions: 0,
+          listeningSeconds: 0,
+        }
+      : null;
+
+    switch (event.eventName) {
+      case "book_detail_viewed":
+        totals.bookViews += 1;
+        if (day) day.bookViews += 1;
+        if (book) book.views += 1;
+        break;
+      case "audio_play_started":
+        totals.audioStarts += 1;
+        if (day) day.audioStarts += 1;
+        if (book) book.audioStarts += 1;
+        if (event.installationIdHash) {
+          listeners.add(event.installationIdHash);
+        }
+        break;
+      case "audio_play_ended": {
+        const activeSeconds = asNumber(event.activeSeconds);
+        totals.listeningSeconds += activeSeconds;
+        if (day) day.listeningSeconds += activeSeconds;
+        if (book) book.listeningSeconds += activeSeconds;
+        break;
+      }
+      case "audio_completed":
+        totals.audioCompletions += 1;
+        if (book) book.audioCompletions += 1;
+        break;
+      case "ebook_opened":
+        totals.ebookOpens += 1;
+        if (day) day.ebookOpens += 1;
+        if (book) book.ebookOpens += 1;
+        if (event.installationIdHash) {
+          ebookReaders.add(event.installationIdHash);
+        }
+        break;
+      case "ebook_completed":
+        totals.ebookCompletions += 1;
+        if (book) book.ebookCompletions += 1;
+        break;
+      case "devotional_viewed":
+        totals.devotionalViews += 1;
+        if (day) day.devotionalViews += 1;
+        if (event.installationIdHash) {
+          devotionalReaders.add(event.installationIdHash);
+        }
+        break;
+      case "devotional_engaged":
+        totals.devotionalEngagements += 1;
+        break;
+      case "book_download_started":
+        totals.downloadStarts += 1;
+        break;
+      case "book_download_completed":
+        totals.downloadCompletions += 1;
+        if (book) book.downloadCompletions += 1;
+        break;
+      case "book_download_failed":
+        totals.downloadFailures += 1;
+        break;
+      case "search_performed":
+        totals.searches += 1;
+        break;
+      case "search_result_opened":
+        totals.searchResultOpens += 1;
+        break;
+      case "notification_opened":
+        totals.notificationOpens += 1;
+        break;
+      case "bookmark_created":
+        totals.bookmarks += 1;
+        break;
+      case "purchase_link_opened":
+        totals.purchaseClicks += 1;
+        break;
+      default:
+        break;
+    }
+
+    if (book) bookStats.set(bookId, book);
+  });
+
+  totals.activeUsers = activeInstallations.size;
+  totals.listeners = listeners.size;
+  totals.ebookReaders = ebookReaders.size;
+  totals.devotionalReaders = devotionalReaders.size;
+  totals.listeningHours = Number(
+    (totals.listeningSeconds / 3600).toFixed(1)
+  );
+
+  const bookMetadata = new Map(books.map((book) => [book.documentId, book]));
+  const topBooks = Array.from(bookStats.values())
+    .map((book) => {
+      const metadata = bookMetadata.get(book.documentId);
+      return {
+        ...book,
+        title: metadata?.title || "Unknown book",
+        categories: metadata?.categories || ["Uncategorized"],
+        listeningHours: Number((book.listeningSeconds / 3600).toFixed(1)),
+        engagement:
+          book.views +
+          book.audioStarts +
+          book.audioCompletions +
+          book.ebookOpens +
+          book.ebookCompletions +
+          book.downloadCompletions,
+      };
+    })
+    .sort(
+      (left, right) =>
+        right.engagement - left.engagement ||
+        right.listeningSeconds - left.listeningSeconds
+    )
+    .slice(0, 10);
+
+  return {
+    available: true,
+    truncated,
+    periodDays: FIRST_PARTY_DAYS,
+    totals,
+    rates: {
+      audioStartPerView: percentage(totals.audioStarts, totals.bookViews),
+      audioCompletionRate: percentage(
+        totals.audioCompletions,
+        totals.audioStarts
+      ),
+      ebookOpenPerView: percentage(totals.ebookOpens, totals.bookViews),
+      ebookCompletionRate: percentage(
+        totals.ebookCompletions,
+        totals.ebookOpens
+      ),
+      devotionalEngagementRate: percentage(
+        totals.devotionalEngagements,
+        totals.devotionalViews
+      ),
+      downloadCompletionRate: percentage(
+        totals.downloadCompletions,
+        totals.downloadStarts
+      ),
+    },
+    trend,
+    topBooks,
   };
 };
 
@@ -269,9 +492,40 @@ module.exports = ({ strapi }) => ({
       )
       .slice(0, 5);
 
+    let firstPartyEvents = [];
+    let firstPartyTruncated = false;
+    if (strapi.db?.query) {
+      const since = new Date();
+      since.setUTCDate(since.getUTCDate() - FIRST_PARTY_DAYS);
+      firstPartyEvents = await strapi.db.query(ANALYTICS_EVENT_UID).findMany({
+        where: {
+          occurredAt: {
+            $gte: since.toISOString(),
+          },
+        },
+        select: [
+          "eventName",
+          "installationIdHash",
+          "occurredAt",
+          "bookDocumentId",
+          "activeSeconds",
+        ],
+        orderBy: { occurredAt: "desc" },
+        limit: 100001,
+      });
+      firstPartyTruncated = firstPartyEvents.length > 100000;
+      if (firstPartyTruncated) firstPartyEvents.length = 100000;
+    }
+
     return {
       generatedAt: new Date().toISOString(),
       scope: "lifetime",
+      firstParty: aggregateFirstPartyEvents(
+        firstPartyEvents,
+        summarizedBooks,
+        new Date(),
+        firstPartyTruncated
+      ),
       totals: {
         ...totals,
         books: totalDocuments,
@@ -312,3 +566,5 @@ module.exports = ({ strapi }) => ({
     };
   },
 });
+
+module.exports.aggregateFirstPartyEvents = aggregateFirstPartyEvents;
