@@ -1,0 +1,12 @@
+{
+  "name": "analytics-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Admin-only catalog and engagement analytics for the library",
+  "strapi": {
+    "kind": "plugin",
+    "name": "analytics-dashboard",
+    "displayName": "Analytics",
+    "description": "Catalog health and lifetime engagement analytics"
+  }
+}

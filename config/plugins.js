@@ -1,4 +1,8 @@
 module.exports = ({ env }) => ({
+  "analytics-dashboard": {
+    enabled: true,
+    resolve: "./src/plugins/analytics-dashboard",
+  },
   "users-permissions": {
     config: {
       jwtSecret: env("JWT_SECRET"),
