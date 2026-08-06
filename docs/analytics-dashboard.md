@@ -37,33 +37,67 @@ The current content model also supports:
 - chapter or YouTube audio coverage
 - purchase-link coverage
 
-## Important limitation
+## Verified first-party analytics
 
-The four engagement fields are cumulative counters. They do not record when an
-action happened, so date filters, daily trends, retention, unique users, sessions,
-and campaign attribution cannot be calculated honestly from the existing data.
+The Flutter client can now send a timestamped, offline-safe event batch to:
 
-## Recommended next data layer
+```text
+POST /api/analytics/events/batch
+DELETE /api/analytics/installation
+```
 
-Add a small append-only `engagement-event` collection with:
+The 30-day dashboard distinguishes these events as **verified engagement**. It
+shows active anonymous installations, book detail views, valid audio starts,
+listening hours, eBook opens and completions, devotional engagement, a daily
+trend, and top verified books. An audio start is sent only after three seconds
+of playback. Listening time is calculated from authoritative player state, not
+from button taps.
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `event_name` | enumeration | `book_viewed`, `audio_played`, `book_opened`, `ebook_downloaded` |
-| `book` | relation | Related book |
-| `occurred_at` | datetime | Server timestamp |
-| `session_id` | hashed string | Optional, short retention, no raw user identifier |
-| `source` | string | Optional app surface/referrer |
-| `locale` | string | Optional app locale |
+The live dashboard reads the latest 100,000 events in its 30-day window. If that
+cap is reached, the window badge says `Latest 100k` so partial totals are never
+presented as complete. Move this aggregation to database rollups before traffic
+regularly reaches that threshold.
 
-Keep the lifetime counters for fast reads, and insert a timestamped event in the
-same tracking request. Once this is available, the dashboard can add honest
-7/30/90-day trends, unique sessions, conversion funnels, and comparisons.
+The event collection is hidden from the Strapi content manager. It stores only
+an HMAC hash of the app-generated installation identifier. Set
+`ANALYTICS_HASH_SECRET` to a long, random production secret; the first
+`APP_KEYS` value is used as a fallback. Changing this secret breaks continuity
+between old and new anonymous installations, but does not affect content.
 
-## Data-quality follow-up
+`ANALYTICS_RETENTION_DAYS` defaults to 90 and cannot be set below 31. A daily
+cron task removes older events at 03:00 UTC.
 
-The public tracking endpoints currently perform a read followed by an update.
-Concurrent requests can overwrite each other's increments, and unauthenticated
-traffic can inflate the totals. Before relying on the counters for high-stakes
-decisions, use atomic database increments and add rate limiting or an ingestion
-token appropriate for the client application.
+## Privacy contract
+
+The endpoint accepts an allowlist of event names and properties. It rejects
+unknown fields, batches larger than 25, invalid content identifiers, timestamps
+older than 31 days, and future timestamps. In particular, the contract does not
+accept:
+
+- search terms
+- bookmark notes
+- names or email addresses
+- advertising identifiers
+- push notification contents
+- IP addresses as event data
+
+The Flutter app asks before collection, works normally after a decline, queues
+approved events locally while offline, supports disabling analytics, and exposes
+a server-side deletion action in Settings.
+
+The deletion endpoint accepts `{ "installationId": "…" }` as JSON. The raw
+identifier is intentionally kept out of the URL so it does not appear in normal
+proxy access logs.
+
+The public endpoint is rate-limited per IP in each running Strapi process.
+Database uniqueness on `eventId` makes retries idempotent. For a horizontally
+scaled deployment, place a shared edge rate limiter in front of Strapi as an
+additional abuse control.
+
+## Interpretation
+
+Lifetime counters remain useful for historical direction but are still
+unauthenticated cumulative counters. Use the verified 30-day block for current
+product decisions. Anonymous installation counts are not people counts, and
+completion rates can be affected by reinstalls, deletion, offline expiry, and
+consent choice.

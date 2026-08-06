@@ -1,0 +1,146 @@
+{
+  "kind": "collectionType",
+  "collectionName": "analytics_events",
+  "info": {
+    "singularName": "analytics-event",
+    "pluralName": "analytics-events",
+    "displayName": "Analytics Event",
+    "description": "Privacy-first anonymous product analytics events"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    }
+  },
+  "attributes": {
+    "eventId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "private": true
+    },
+    "installationIdHash": {
+      "type": "string",
+      "required": true,
+      "private": true
+    },
+    "eventName": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "book_detail_viewed",
+        "audio_play_started",
+        "audio_play_ended",
+        "audio_progress_reached",
+        "audio_completed",
+        "ebook_opened",
+        "ebook_progress_reached",
+        "ebook_completed",
+        "book_download_started",
+        "book_download_completed",
+        "book_download_failed",
+        "devotional_viewed",
+        "devotional_engaged",
+        "notification_opened",
+        "search_performed",
+        "search_result_opened",
+        "bookmark_created",
+        "purchase_link_opened"
+      ]
+    },
+    "occurredAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "receivedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "required": true,
+      "default": 1
+    },
+    "contentType": {
+      "type": "enumeration",
+      "enum": [
+        "book",
+        "devotional",
+        "app"
+      ]
+    },
+    "bookDocumentId": {
+      "type": "string"
+    },
+    "chapterDocumentId": {
+      "type": "string"
+    },
+    "devotionalId": {
+      "type": "string"
+    },
+    "sourceSurface": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "enumeration",
+      "enum": [
+        "android",
+        "ios",
+        "macos",
+        "web",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "appVersion": {
+      "type": "string"
+    },
+    "mediaSource": {
+      "type": "enumeration",
+      "enum": [
+        "streamed",
+        "downloaded",
+        "unknown"
+      ]
+    },
+    "playbackSessionId": {
+      "type": "string",
+      "private": true
+    },
+    "durationSeconds": {
+      "type": "decimal"
+    },
+    "positionSeconds": {
+      "type": "decimal"
+    },
+    "activeSeconds": {
+      "type": "decimal"
+    },
+    "progressPercent": {
+      "type": "integer"
+    },
+    "resultCount": {
+      "type": "integer"
+    },
+    "outcome": {
+      "type": "enumeration",
+      "enum": [
+        "success",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "isResume": {
+      "type": "boolean"
+    }
+  }
+}

@@ -514,6 +514,166 @@ const InsightValue = styled.p`
   letter-spacing: -0.03em;
 `;
 
+const FreshPanel = styled(Panel)`
+  grid-column: span 12;
+  padding: var(--space-xl);
+`;
+
+const FreshHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+
+  h2 {
+    margin: 0 0 6px;
+    font: 540 27px/1 Charter, "Iowan Old Style", Georgia, serif;
+  }
+
+  @media (max-width: 700px) {
+    flex-direction: column;
+  }
+`;
+
+const FreshBadge = styled.span`
+  padding: 7px 9px;
+  border: 1px solid oklch(0.78 0.09 145 / 0.45);
+  border-radius: 3px;
+  color: var(--acid);
+  font: 700 9px/1 "Avenir Next", Avenir, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
+const FreshMetrics = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+
+  @media (max-width: 980px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`;
+
+const FreshMetric = styled.div`
+  min-height: 116px;
+  padding: var(--space-lg);
+  background: var(--panel-soft);
+
+  strong {
+    display: block;
+    margin: 12px 0 8px;
+    font: 540 28px/1 Charter, "Iowan Old Style", Georgia, serif;
+  }
+`;
+
+const TrendChart = styled.div`
+  height: 126px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--line);
+`;
+
+const TrendDay = styled.div`
+  flex: 1;
+  min-width: 2px;
+  height: ${({ $height }) => `${Math.max(2, $height)}%`};
+  border-radius: 2px 2px 0 0;
+  background: ${({ $active }) =>
+    $active ? "var(--acid)" : "oklch(0.73 0.07 235 / 0.52)"};
+`;
+
+const VerifiedBooks = styled.div`
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--line);
+`;
+
+const ActionMetrics = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: var(--space-xl);
+  border: 1px solid var(--line);
+  background: var(--line);
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`;
+
+const ActionMetric = styled.div`
+  padding: var(--space-md) var(--space-lg);
+  background: var(--panel-soft);
+
+  strong {
+    display: block;
+    margin-top: 8px;
+    font: 540 22px/1 Charter, "Iowan Old Style", Georgia, serif;
+  }
+`;
+
+const VerifiedBooksHeader = styled.div`
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(3, minmax(72px, 120px));
+  gap: var(--space-lg);
+  padding: 0 var(--space-sm) var(--space-sm);
+  color: var(--muted);
+  font: 700 9px/1 "Avenir Next", Avenir, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  @media (max-width: 620px) {
+    display: none;
+  }
+`;
+
+const VerifiedBookRow = styled.div`
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(3, minmax(72px, 120px));
+  align-items: center;
+  gap: var(--space-lg);
+  min-height: 56px;
+  padding: var(--space-sm);
+  border-top: 1px solid oklch(0.5 0.018 252 / 0.18);
+  font-size: 12px;
+
+  strong {
+    overflow: hidden;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    span:nth-of-type(2),
+    span:nth-of-type(3) {
+      display: none;
+    }
+  }
+`;
+
 const BooksPanel = styled(Panel)`
   grid-column: span 8;
   padding: 25px;
@@ -928,6 +1088,13 @@ const DashboardContent = () => {
     1,
     ...data.segments.map((segment) => segment.engagementPerBook)
   );
+  const firstParty = data.firstParty;
+  const trendMax = Math.max(
+    1,
+    ...(firstParty?.trend || []).map(
+      (day) => day.bookViews + day.audioStarts + day.ebookOpens + day.devotionalViews
+    )
+  );
 
   return (
     <PageCanvas>
@@ -992,6 +1159,125 @@ const DashboardContent = () => {
             ))}
           </SignalLedger>
         </Grid>
+
+        {firstParty?.available ? (
+          <Grid aria-label="Verified recent engagement">
+            <FreshPanel $delay={95}>
+              <FreshHeader>
+                <div>
+                  <h2>Verified engagement</h2>
+                  <FinePrint>
+                    Anonymous, opt-in activity confirmed by player, reader, and
+                    download state—not button taps.
+                  </FinePrint>
+                </div>
+                <FreshBadge>
+                  {firstParty.truncated ? "Latest 100k · " : ""}
+                  {firstParty.periodDays} day window
+                </FreshBadge>
+              </FreshHeader>
+
+              <FreshMetrics>
+                <FreshMetric>
+                  <Label>Active installs</Label>
+                  <strong>{formatNumber(firstParty.totals.activeUsers)}</strong>
+                  <FinePrint>Anonymous and resettable.</FinePrint>
+                </FreshMetric>
+                <FreshMetric>
+                  <Label>Book views</Label>
+                  <strong>{formatNumber(firstParty.totals.bookViews)}</strong>
+                  <FinePrint>Displayed detail screens.</FinePrint>
+                </FreshMetric>
+                <FreshMetric>
+                  <Label>Valid audio starts</Label>
+                  <strong>{formatNumber(firstParty.totals.audioStarts)}</strong>
+                  <FinePrint>{firstParty.rates.audioStartPerView}% per view</FinePrint>
+                </FreshMetric>
+                <FreshMetric>
+                  <Label>Listening hours</Label>
+                  <strong>{formatExact(firstParty.totals.listeningHours)}</strong>
+                  <FinePrint>{formatNumber(firstParty.totals.listeners)} listeners</FinePrint>
+                </FreshMetric>
+                <FreshMetric>
+                  <Label>eBook opens</Label>
+                  <strong>{formatNumber(firstParty.totals.ebookOpens)}</strong>
+                  <FinePrint>{firstParty.rates.ebookCompletionRate}% completed</FinePrint>
+                </FreshMetric>
+                <FreshMetric>
+                  <Label>Devotional views</Label>
+                  <strong>{formatNumber(firstParty.totals.devotionalViews)}</strong>
+                  <FinePrint>
+                    {firstParty.rates.devotionalEngagementRate}% engaged
+                  </FinePrint>
+                </FreshMetric>
+              </FreshMetrics>
+
+              <TrendChart aria-label="Thirty day verified engagement trend">
+                {firstParty.trend.map((day, index) => {
+                  const value =
+                    day.bookViews +
+                    day.audioStarts +
+                    day.ebookOpens +
+                    day.devotionalViews;
+                  return (
+                    <TrendDay
+                      key={day.date}
+                      $height={(value / trendMax) * 100}
+                      $active={index === firstParty.trend.length - 1}
+                      title={`${formatDate(day.date)}: ${formatExact(value)} verified actions`}
+                    />
+                  );
+                })}
+              </TrendChart>
+
+              <ActionMetrics aria-label="Thirty day discovery and action metrics">
+                {[
+                  ["Searches", firstParty.totals.searches],
+                  ["Results opened", firstParty.totals.searchResultOpens],
+                  ["Downloads", firstParty.totals.downloadCompletions],
+                  ["Bookmarks", firstParty.totals.bookmarks],
+                  ["Purchase clicks", firstParty.totals.purchaseClicks],
+                  ["Push opens", firstParty.totals.notificationOpens],
+                ].map(([label, value]) => (
+                  <ActionMetric key={label}>
+                    <Label>{label}</Label>
+                    <strong>{formatNumber(value)}</strong>
+                  </ActionMetric>
+                ))}
+              </ActionMetrics>
+
+              <VerifiedBooks>
+                <SectionTitle>
+                  <h2>Top verified books</h2>
+                  <span>Views · starts · listening</span>
+                </SectionTitle>
+                {firstParty.topBooks.length ? (
+                  <>
+                    <VerifiedBooksHeader aria-hidden="true">
+                      <span>Book</span>
+                      <span>Views</span>
+                      <span>Audio starts</span>
+                      <span>Hours</span>
+                    </VerifiedBooksHeader>
+                    {firstParty.topBooks.slice(0, 6).map((book) => (
+                      <VerifiedBookRow key={book.documentId}>
+                        <strong title={book.title}>{book.title}</strong>
+                        <span>{formatNumber(book.views)}</span>
+                        <span>{formatNumber(book.audioStarts)}</span>
+                        <span>{formatExact(book.listeningHours)}</span>
+                      </VerifiedBookRow>
+                    ))}
+                  </>
+                ) : (
+                  <FinePrint>
+                    Book rankings will appear after opted-in readers start
+                    viewing, listening, or reading.
+                  </FinePrint>
+                )}
+              </VerifiedBooks>
+            </FreshPanel>
+          </Grid>
+        ) : null}
 
         <Grid>
           <RatioStrip $delay={130}>
