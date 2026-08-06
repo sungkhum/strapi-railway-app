@@ -11,6 +11,8 @@ const createStrapi = ({ books = [], counts = {} } = {}) => ({
       async findMany(params) {
         assert.equal(uid, "api::book.book");
         assert.equal(params.status, "published");
+        assert.ok(params.populate.categories);
+        assert.equal(params.populate.category, undefined);
         return books;
       },
       async count(params) {
@@ -32,11 +34,12 @@ test("aggregates lifetime engagement, coverage, and rankings", async () => {
       book_opens: "10",
       downloads: "5",
       updatedAt: "2026-08-05T00:00:00.000Z",
-      category: { name: "History" },
+      categories: [{ name: "History" }, { name: "Faith" }],
       authors: [{ name: "Author A" }],
       tags: [],
       chapters: [{ title: "Chapter 1" }],
       ebook: { name: "book-a.pdf" },
+      purchase_url: "https://example.com/book-a",
       is_featured: true,
     },
     {
@@ -47,7 +50,7 @@ test("aggregates lifetime engagement, coverage, and rankings", async () => {
       book_opens: "5",
       downloads: null,
       updatedAt: "2026-08-04T00:00:00.000Z",
-      category: null,
+      categories: [],
       authors: [],
       tags: [{ name: "Popular" }],
       chapters: [],
@@ -73,6 +76,7 @@ test("aggregates lifetime engagement, coverage, and rankings", async () => {
     bookOpens: 15,
     downloads: 5,
     engagement: 200,
+    chapters: 1,
     books: 3,
     publishedBooks: 2,
     unpublishedBooks: 1,
@@ -86,9 +90,33 @@ test("aggregates lifetime engagement, coverage, and rankings", async () => {
     downloadPerView: 3.3,
   });
   assert.equal(result.topBooks[0].documentId, "book-a");
-  assert.equal(result.categories[0].name, "History");
+  assert.deepEqual(result.topBooks[0].categories, ["History", "Faith"]);
+  assert.equal(result.rankings.categories[0].name, "History");
+  assert.equal(result.rankings.authors[0].name, "Author A");
+  assert.equal(result.rankings.tags[0].name, "Untagged");
+  assert.equal(result.opportunities[0].documentId, "book-b");
+  assert.deepEqual(result.insights, {
+    activeBooks: 2,
+    inactiveBooks: 0,
+    activeBookRate: 100,
+    averageEngagementPerBook: 100,
+    medianEngagementPerBook: 100,
+    topTenShare: 100,
+  });
+  assert.equal(
+    result.distribution.find((bucket) => bucket.key === "strong").books,
+    2
+  );
+  assert.equal(result.segments.length, 6);
+  assert.equal(
+    result.segments.find((segment) => segment.key === "audio")
+      .engagementPerBook,
+    140
+  );
   assert.equal(result.contentHealth.withEnglishDescription, 1);
+  assert.equal(result.contentHealth.withCategories, 1);
   assert.equal(result.contentHealth.withAudio, 1);
+  assert.equal(result.contentHealth.withPurchaseLink, 1);
   assert.equal(result.contentHealth.featured, 1);
   assert.equal(result.contentHealth.newArrivals, 1);
 });
@@ -106,5 +134,9 @@ test("returns stable zero values for an empty catalog", async () => {
     downloadPerView: 0,
   });
   assert.deepEqual(result.topBooks, []);
-  assert.deepEqual(result.categories, []);
+  assert.deepEqual(result.rankings.categories, []);
+  assert.deepEqual(result.rankings.authors, []);
+  assert.deepEqual(result.rankings.tags, []);
+  assert.deepEqual(result.opportunities, []);
+  assert.equal(result.insights.activeBookRate, 0);
 });

@@ -17,7 +17,9 @@ Each published book stores four lifetime counters:
 - `downloads`
 
 The dashboard reports their totals, their share of all recorded actions, top
-books, category rankings, and action-to-view ratios. Ratios are directional
+books, category/author/tag rankings, engagement distribution, top-10
+concentration, and action-to-view ratios. It also surfaces books with strong
+visibility but comparatively light follow-through. Ratios are directional
 signals rather than a strict funnel because the counters are not session-based.
 
 ### Catalog
@@ -26,13 +28,14 @@ The current content model also supports:
 
 - published and unpublished book inventory
 - category, author, and tag inventory
+- comparative engagement per book for audio, eBook, and featured segments
 - featured and new-arrival flags
 - category and author assignment coverage
 - tag coverage
 - English-description coverage
 - eBook attachment coverage
 - chapter or YouTube audio coverage
-- recently updated published books
+- purchase-link coverage
 
 ## Important limitation
 
