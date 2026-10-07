@@ -1,0 +1,54 @@
+[
+  {
+    "book": "Khmer Women of the word_Layout.epub",
+    "modifiedXhtmlFiles": 2,
+    "checks": [
+      "well-formed XML",
+      "visible Unicode text preserved",
+      "authored breaks preserved",
+      "IDs preserved",
+      "links preserved",
+      "all fonts and non-markup assets unchanged",
+      "stored first mimetype"
+    ]
+  },
+  {
+    "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+    "modifiedXhtmlFiles": 2,
+    "checks": [
+      "well-formed XML",
+      "visible Unicode text preserved",
+      "authored breaks preserved",
+      "IDs preserved",
+      "links preserved",
+      "all fonts and non-markup assets unchanged",
+      "stored first mimetype"
+    ]
+  },
+  {
+    "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+    "modifiedXhtmlFiles": 2,
+    "checks": [
+      "well-formed XML",
+      "visible Unicode text preserved",
+      "authored breaks preserved",
+      "IDs preserved",
+      "links preserved",
+      "all fonts and non-markup assets unchanged",
+      "stored first mimetype"
+    ]
+  },
+  {
+    "book": "Confessions Khmer InDesign 4.7.epub",
+    "modifiedXhtmlFiles": 2,
+    "checks": [
+      "well-formed XML",
+      "visible Unicode text preserved",
+      "authored breaks preserved",
+      "IDs preserved",
+      "links preserved",
+      "all fonts and non-markup assets unchanged",
+      "stored first mimetype"
+    ]
+  }
+]

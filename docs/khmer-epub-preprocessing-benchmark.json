@@ -1,0 +1,179 @@
+{
+  "environment": {
+    "node": "v22.15.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "icu": "76.1"
+  },
+  "assets": {
+    "km_frequency_dictionary.json": {
+      "bytes": 758047,
+      "gzipBytes": 168914
+    },
+    "km_kcc_tagger.json": {
+      "bytes": 1204747,
+      "gzipBytes": 268041
+    },
+    "processor.cjs": {
+      "bytes": 3377507,
+      "gzipBytes": 551075
+    }
+  },
+  "peakObservedRssBytes": 393871360,
+  "records": [
+    {
+      "book": "Confessions Khmer InDesign 4.7.epub",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9863908389918288,
+      "words": 122202,
+      "breaks": 108156,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 1.2212079999999332
+        },
+        {
+          "name": "OEBPS/Confessions_Khmer_InDesign_4.7.xhtml",
+          "words": 121975,
+          "elapsedMs": 20864.645540999998
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 227,
+          "elapsedMs": 75.67450000000099
+        }
+      ],
+      "initializationMs": 71.93237500000004,
+      "wrappedWords": 93308,
+      "elapsedMs": 21496.285833,
+      "inputBytes": 571217,
+      "outputBytes": 668624,
+      "growthPercent": 17.052538702454576,
+      "heapBeforeBytes": 17802432,
+      "heapAfterBytes": 234774248,
+      "rssAfterBytes": 222543872
+    },
+    {
+      "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9582287258207206,
+      "words": 105899,
+      "breaks": 90844,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.23474999999962165
+        },
+        {
+          "name": "OEBPS/Family_Life_of_Christian_Leader_-Khmer_4.2.xhtml",
+          "words": 105156,
+          "elapsedMs": 18423.236542
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 743,
+          "elapsedMs": 160.45125000000553
+        }
+      ],
+      "initializationMs": 0.0007500000028812792,
+      "wrappedWords": 81822,
+      "elapsedMs": 19344.032166999998,
+      "inputBytes": 3014737,
+      "outputBytes": 2827117,
+      "growthPercent": -6.223428445002,
+      "heapBeforeBytes": 41764088,
+      "heapAfterBytes": 60904600,
+      "rssAfterBytes": 393871360
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9700880655936835,
+      "words": 61075,
+      "breaks": 53692,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.19187499999679858
+        },
+        {
+          "name": "OEBPS/Khmer_Women_of_the_word_Layout.xhtml",
+          "words": 60987,
+          "elapsedMs": 10439.79
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 88,
+          "elapsedMs": 29.04599999999482
+        }
+      ],
+      "initializationMs": 0.001207999994221609,
+      "wrappedWords": 46621,
+      "elapsedMs": 10926.173082999994,
+      "inputBytes": 1801282,
+      "outputBytes": 1842815,
+      "growthPercent": 2.3057466848611208,
+      "heapBeforeBytes": 39911040,
+      "heapAfterBytes": 49743208,
+      "rssAfterBytes": 188923904
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9859837967365258,
+      "words": 45619,
+      "breaks": 39577,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.3227919999990263
+        },
+        {
+          "name": "OEBPS/WhatIsHealthyChurch_2022_-_Khmer_1.8.xhtml",
+          "words": 45256,
+          "elapsedMs": 7569.580374999998
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 363,
+          "elapsedMs": 119.34620800000266
+        }
+      ],
+      "initializationMs": 0.0018750000017462298,
+      "wrappedWords": 34098,
+      "elapsedMs": 7989.579915999995,
+      "inputBytes": 833008,
+      "outputBytes": 843162,
+      "growthPercent": 1.218955880375705,
+      "heapBeforeBytes": 40030000,
+      "heapAfterBytes": 50711904,
+      "rssAfterBytes": 189743104
+    }
+  ],
+  "workerIntegrationCheck": {
+    "book": "Confessions Khmer InDesign 4.7.epub",
+    "processed": true,
+    "seconds": 27.164847416,
+    "words": 122202
+  }
+}
