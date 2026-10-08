@@ -1,7 +1,7 @@
 Khmer EPUB upload preprocessing
 
 The Strapi upload extension processes new EPUB uploads and replacements before
-storage. Aksara runs in one lazy worker, with up to eight queued uploads and a
+storage. Font preparation and Aksara run in one lazy worker, with up to eight queued uploads and a
 120-second processing timeout. Idle workers stop after 60 seconds. Files are
 queued by path so waiting uploads do not all allocate large buffers.
 
@@ -16,8 +16,13 @@ applied to books. Existing authored zero-width spaces and word joiners remain.
 Whole words receive nowrap wrappers, except single Khmer character clusters
 which cannot safely be split anyway. Original formatting ancestors are kept
 whenever possible. Cross-style words are reconstructed without duplicate IDs.
-Fonts and images remain byte-identical to the original upload. The Flutter
-patch still handles IDPF font deobfuscation and legacy split vowel runs.
+Images and unrelated resources remain byte-identical. The worker also decodes
+standard IDPF embedding obfuscation and repairs the exact known Khmer subsets.
+Split syllable runs are reunited before segmentation. Unknown fonts retain their
+decoded bytes; unrelated encryption records/resources are preserved. Font
+payloads, provenance, notices and regeneration tools are in font-repairs/.
+The Flutter reader loads these finished EPUBs without any font repair routines
+or bundled reference fonts.
 
 Prebuilt runtime is committed in dist/processor.cjs: no extra deployment command
 or root dependency is needed. Retain THIRD_PARTY_LICENSES.txt and vendor/LICENSE.
@@ -31,17 +36,21 @@ To preprocess an existing source without uploading:
 To benchmark a folder, from this tool directory:
   node --expose-gc benchmark.mjs /path/to/originals /path/to/separate-output
 
-An OPF version marker makes repeated processing byte-idempotent. Keep original
+Separate OPF boundary/font markers make completed processing byte-idempotent.
+Boundary-only outputs of the current Aksara version can gain fonts without
+regenerating XHTML or word breaks. Keep original
 source EPUBs for future model upgrades; a prepared file from another version
 requires the original source rather than guessing which invisible breaks were
 authored. New uploads get Strapi's normal unique URL. Media replacements keep
 the old URL by Strapi design, so purge any CDN cache when replacing a file.
-Existing Media Library items are not rewritten automatically.
+Existing Media Library items are not rewritten automatically. Deploy the backend
+and reprocess existing Khmer originals before releasing the paired Flutter change;
+refresh offline copies as well. Raw local Khmer books need this CLI/upload hook.
 
 Preprocessing limits: 50 MiB compressed input, 128 MiB declared unpacked size,
 32 MiB per resource and 4000 resources. Books exceeding these bounds upload
 unchanged, with a log message; this preserves existing large uploads in other
-languages. Such Khmer books retain their original line-breaking behavior.
+languages. Such Khmer books receive neither font nor word-boundary repairs.
 The worker has a 512 MiB V8 old-generation limit. Invalid Khmer XHTML and unknown
 processing versions fail the EPUB upload with a specific error. EPUB processing
 runs away from Strapi's main event loop. No content-type or database migration
@@ -49,9 +58,9 @@ is required. Language data is a bundled server asset, not a SQL database and
 not a phone download.
 
 Validation includes character/author-break preservation, link and ID checks,
-font/asset equality, XML parsing, OCF mimetype ordering, other-language identity,
-Strapi upload/replace wiring, cleanup on errors, Flutter font/XML regressions,
-cache invalidation and WebKit/Chromium reader checks. Reported 4x CPU browser
+verified font hashes and unchanged non-markup assets, XML parsing, OCF mimetype ordering, other-language identity,
+Strapi upload/replace wiring, cleanup on errors, IDPF decoding/encryption preservation, real worker font storage,
+Flutter byte-cache invalidation and WebKit/Chromium reader checks. Reported 4x CPU browser
 benchmarks simulate a slower device; physical phone testing is still needed
 before release. The XML-only checks are not a complete EPUBCheck certification.
 

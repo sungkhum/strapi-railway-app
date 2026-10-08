@@ -3,6 +3,7 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { VERSION, WORD_CLASS, charSets, getBreaker, dictionaryEntries, modelFeatures } from './runtime.ts';
+import { FONT_VERSION, FONT_MARKER, prepareFonts } from './fonts.mjs';
 
 const XHTML='http://www.w3.org/1999/xhtml';
 const OPF='http://www.idpf.org/2007/opf';
@@ -234,8 +235,10 @@ export async function preprocessEpub(input,options={}) {
   if(!metadata) throw new Error('Missing EPUB metadata');
   const marker=elements(metadata,'meta').find(meta=>meta.getAttribute('name')===MARKER || meta.getAttribute('property')===MARKER);
   const markerValue=marker?.getAttribute('content') || marker?.textContent;
-  if(markerValue===VERSION) return {bytes:original,processed:false,reason:'already-processed',stats:{elapsedMs:performance.now()-started}};
-  if(markerValue) throw new Error('This EPUB was prepared by another version; upload the original source EPUB to rebuild it');
+  const fontMarker=elements(metadata,'meta').find(meta=>meta.getAttribute('name')===FONT_MARKER || meta.getAttribute('property')===FONT_MARKER);
+  const fontVersion=fontMarker?.getAttribute('content') || fontMarker?.textContent;
+  if(markerValue===VERSION && fontVersion===FONT_VERSION) return {bytes:original,processed:false,reason:'already-processed',stats:{elapsedMs:performance.now()-started}};
+  if(markerValue && markerValue!==VERSION || fontVersion && fontVersion!==FONT_VERSION) throw new Error('This EPUB was prepared by another version; upload the original source EPUB to rebuild it');
   const declaredKhmer=Array.from(packageDoc.getElementsByTagNameNS(DC,'language')).some(node=>/^(km|khm)(-|$)/i.test(node.textContent.trim()));
   const markup=elements(packageDoc,'item').filter(item=>/^(application\/xhtml\+xml|text\/html)$/.test(item.getAttribute('media-type'))).map(item=>relativeResource(packagePath,item.getAttribute('href')));
   const documents=[];let khmerLetters=0,totalLetters=0;
@@ -257,21 +260,30 @@ export async function preprocessEpub(input,options={}) {
   const khmerRatio=totalLetters ? khmerLetters/totalLetters : 0;
   if(!khmerLetters || !declaredKhmer && khmerRatio<0.5) return {bytes:original,processed:false,reason:'not-khmer',stats:{khmerRatio,elapsedMs:performance.now()-started}};
   const stats={version:VERSION,dictionaryEntries,modelFeatures,intlSegmenter:typeof Intl.Segmenter==='function',icuVersion:process.versions.icu,khmerRatio,words:0,breaks:0,chapters:[]};
-  const initStart=performance.now();getBreaker();stats.initializationMs=performance.now()-initStart;
-  for(const item of documents) {
-    const start=performance.now(),before=stats.words;
-    const output=processDocument(item.document,stats);
-    if(stats.words>before) zip.file(item.name,output,{date:zip.file(item.name).date});
-    stats.chapters.push({name:item.name,words:stats.words-before,elapsedMs:performance.now()-start});
+  stats.fonts=await prepareFonts(zip,packageDoc,{parse,serialize:document=>serializer.serializeToString(document)});
+  // Segmentation-only outputs from the first PR revision can gain fonts without
+  // regenerating authored/generated boundaries or changing chapter/CFI offsets.
+  if(markerValue!==VERSION) {
+    const initStart=performance.now();getBreaker();stats.initializationMs=performance.now()-initStart;
+    for(const item of documents) {
+      const start=performance.now(),before=stats.words;
+      const output=processDocument(item.document,stats);
+      if(stats.words>before) zip.file(item.name,output,{date:zip.file(item.name).date});
+      stats.chapters.push({name:item.name,words:stats.words-before,elapsedMs:performance.now()-start});
+    }
   }
-  if(marker) marker.parentNode.removeChild(marker);
-  const meta=packageDoc.createElementNS(OPF,'meta');
-  if(packageDoc.documentElement.getAttribute('version').startsWith('3')) {
-    const prefix=packageDoc.documentElement.getAttribute('prefix') || '';
-    if(!/(^|\s)plovpit:/.test(prefix)) packageDoc.documentElement.setAttribute('prefix',(prefix+' plovpit: https://plovpit.com/vocab/').trim());
-    meta.setAttribute('property',MARKER);meta.appendChild(packageDoc.createTextNode(VERSION));
-  } else {meta.setAttribute('name',MARKER);meta.setAttribute('content',VERSION);}
-  metadata.appendChild(meta);zip.file(packagePath,serializer.serializeToString(packageDoc),{date:zip.file(packagePath).date});
+  function setMarker(name,value,existing) {
+    if(existing) existing.parentNode.removeChild(existing);
+    const meta=packageDoc.createElementNS(OPF,'meta');
+    if(packageDoc.documentElement.getAttribute('version').startsWith('3')) {
+      const prefix=packageDoc.documentElement.getAttribute('prefix') || '';
+      if(!/(^|\s)plovpit:/.test(prefix)) packageDoc.documentElement.setAttribute('prefix',(prefix+' plovpit: https://plovpit.com/vocab/').trim());
+      meta.setAttribute('property',name);meta.appendChild(packageDoc.createTextNode(value));
+    } else {meta.setAttribute('name',name);meta.setAttribute('content',value);}
+    metadata.appendChild(meta);
+  }
+  setMarker(MARKER,VERSION,marker);setMarker(FONT_MARKER,FONT_VERSION,fontMarker);
+  zip.file(packagePath,serializer.serializeToString(packageDoc),{date:zip.file(packagePath).date});
   // OCF requires mimetype first, stored and without an extra field.
   const result=new JSZip();result.file('mimetype','application/epub+zip',{compression:'STORE',date:zip.file('mimetype').date});
   for(const file of Object.values(zip.files)) {

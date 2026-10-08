@@ -1,54 +1,444 @@
 [
   {
-    "book": "Khmer Women of the word_Layout.epub",
-    "modifiedXhtmlFiles": 2,
-    "checks": [
-      "well-formed XML",
-      "visible Unicode text preserved",
-      "authored breaks preserved",
-      "IDs preserved",
-      "links preserved",
-      "all fonts and non-markup assets unchanged",
-      "stored first mimetype"
-    ]
-  },
-  {
-    "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
-    "modifiedXhtmlFiles": 2,
-    "checks": [
-      "well-formed XML",
-      "visible Unicode text preserved",
-      "authored breaks preserved",
-      "IDs preserved",
-      "links preserved",
-      "all fonts and non-markup assets unchanged",
-      "stored first mimetype"
-    ]
+    "book": "Confessions Khmer InDesign 4.7.epub",
+    "inputSha256": "db226fbfaa3baca718fb7fb3bf791a600125572e14ba8445697fb8596a545b37",
+    "outputSha256": "2fc3ad0fd91b5b98ad5f93321609c4657734bc723aa86fff0c15fb9f751b57ad",
+    "fonts": [
+      {
+        "name": "OEBPS/font/AngDaunKeo.ttf",
+        "sha256": "d5c05f2272ae8b2874c61af0edee0d81884aa30cdf9c07f572c0f3f928ef5ae7",
+        "bytes": 62432,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/AngDaunsok.ttf",
+        "sha256": "8e29e9734de6a6d7cd083df1729e21ff70159a0b69345df755fc0d57a5fa9b6e",
+        "bytes": 6400,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Battambang.otf",
+        "sha256": "16cc3a84ba51926382c5af7853a304fcc4168f4bced22c207cfb6b09f59c884d",
+        "bytes": 14676,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Bayon.ttf",
+        "sha256": "d63d3d354b329dab7f28896788d4726eab1b9fa5e1dcc83d2f058bb52a48266b",
+        "bytes": 74092,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Content-Bold.ttf",
+        "sha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+        "bytes": 306292,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Content.ttf",
+        "sha256": "56e535ce2304ac146b7cafead5a73b1e93538e6ac42e9227be9c16d8ad213c54",
+        "bytes": 25720,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ContentEnhanced.otf",
+        "sha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+        "bytes": 289568,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MinionPro-Regular.otf",
+        "sha256": "b75c69f72737d14d4d65cbb4b809f90924dca7c32fb0f14e5f17f9c58dd5958b",
+        "bytes": 27748,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-Regular.otf",
+        "sha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+        "bytes": 15240,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ObliquaSans-Italic.otf",
+        "sha256": "08099d0573063f5a097051576d9752683c1473b73eaecde1c2017cfb2f9cf39d",
+        "bytes": 8036,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ObliquaSans.otf",
+        "sha256": "5b493ceeefbc8902d84dacf6955f87eb01a5d5e8fc51538cc1c8734d8fb75398",
+        "bytes": 13368,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Raleway-Bold.ttf",
+        "sha256": "1520bc8493e03a845ddf1a25f55e44c4ca249689658d8e71bafe7ad1450ff044",
+        "bytes": 46816,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Raleway-Regular.ttf",
+        "sha256": "7133f5a0fd45eb59ede0b6fe8c17f7cee9a8bf0c44a97847cd29baef6db421b0",
+        "bytes": 45704,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+        "sha256": "1f0bbceeb17f56c9afc95a4334874d457fcd947d84b3366e50cf4f5286af11b5",
+        "bytes": 11312,
+        "matchesReviewedFont": true
+      }
+    ],
+    "chapters": [
+      {
+        "name": "OEBPS/cover.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/Confessions_Khmer_InDesign_4.7.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/toc.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      }
+    ],
+    "unchangedAssets": 10
   },
   {
     "book": "Family Life of Christian Leader -Khmer 4.2.epub",
-    "modifiedXhtmlFiles": 2,
-    "checks": [
-      "well-formed XML",
-      "visible Unicode text preserved",
-      "authored breaks preserved",
-      "IDs preserved",
-      "links preserved",
-      "all fonts and non-markup assets unchanged",
-      "stored first mimetype"
-    ]
+    "inputSha256": "e7980562084f71d9cf2eae02a97c4459a24a4403b10f43e65d21924c092faaca",
+    "outputSha256": "4eb8be448b85a77b74916a7c6f76d97e8797e1f0eabca6fff442db29ec7cca7e",
+    "fonts": [
+      {
+        "name": "OEBPS/font/Bayon.ttf",
+        "sha256": "bf49de4644f06971281e4cc3270dfaec808872fa889ac2fbc1222729a1f88f0f",
+        "bytes": 85332,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ContentEnhanced.otf",
+        "sha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+        "bytes": 289568,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+        "sha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+        "bytes": 101384,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+        "sha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+        "bytes": 92856,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KhmerWatPhnom.ttf",
+        "sha256": "f8bc3a7dea4e88e8263f3e7d051746f4e193194e00453eeb33baf5decadc452e",
+        "bytes": 115020,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MinionPro-Regular.otf",
+        "sha256": "61226f01f347e5a66c9399f399c90ac7b977fc4b5f073189ebc8150c83db9988",
+        "bytes": 15696,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-Regular.otf",
+        "sha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+        "bytes": 15240,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/OpenSans.ttf",
+        "sha256": "31a5503ba7f42dae7a97885c82d41fb55fcfb82d363b71f097b743aaa223b06a",
+        "bytes": 31300,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Raleway-Regular.ttf",
+        "sha256": "af70a889a38b302043ab66c861382678866a1be2d1c5923635d268e1e2769b69",
+        "bytes": 44232,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/SabonLTPro-Italic.otf",
+        "sha256": "615284b710d1666fca689effeb1daa649648a40ddf12daf53dc27f45fd860746",
+        "bytes": 18592,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/SabonLTPro-Roman.otf",
+        "sha256": "d0b1055f3b3b08cba3fb5ac81dda431f2502ce8f02d4240a04ec00cfcf59eee2",
+        "bytes": 28016,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+        "sha256": "3b2269b59292103a8c9c7cdd7a94cbfe04265a2951c7ee9ac6d3c23dd668239f",
+        "bytes": 11980,
+        "matchesReviewedFont": true
+      }
+    ],
+    "chapters": [
+      {
+        "name": "OEBPS/cover.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/Family_Life_of_Christian_Leader_-Khmer_4.2.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/toc.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      }
+    ],
+    "unchangedAssets": 10
   },
   {
-    "book": "Confessions Khmer InDesign 4.7.epub",
-    "modifiedXhtmlFiles": 2,
-    "checks": [
-      "well-formed XML",
-      "visible Unicode text preserved",
-      "authored breaks preserved",
-      "IDs preserved",
-      "links preserved",
-      "all fonts and non-markup assets unchanged",
-      "stored first mimetype"
-    ]
+    "book": "Khmer Women of the word_Layout.epub",
+    "inputSha256": "d74880e9171d45750fe6a34b428c191749f949be7bd2a5b0f8c40156b9151e8e",
+    "outputSha256": "10fe764fa2a5eabac856d95fd089fa473a05b7498226c112cd49ba1788f10299",
+    "fonts": [
+      {
+        "name": "OEBPS/font/AdrianeText-Bold.otf",
+        "sha256": "1948aa736ff9f5241c4a939d67c86bba9de4dee13041f6320684d791ad2d29a7",
+        "bytes": 38708,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/AdrianeText-Italic.otf",
+        "sha256": "1210f92082c4c48f75ddcc61904aaba4f6f4cf87108c0e25e745308d63a20941",
+        "bytes": 48216,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/AdrianeText.otf",
+        "sha256": "9b1649e67277582ad947acb5f04e7092114fc4c94f458ec687d2db0e95068d6f",
+        "bytes": 57536,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Content-Bold.ttf",
+        "sha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+        "bytes": 306292,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ContentEnhanced.otf",
+        "sha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+        "bytes": 289568,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Kantumruy.ttf",
+        "sha256": "b31bb5309e2726738fd56ecead4c368502fe37023b6e7cc35a9d2933ce0819c6",
+        "bytes": 13112,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProItalic-Medium.ttf",
+        "sha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+        "bytes": 101384,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+        "sha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+        "bytes": 101384,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProItalic-SemiBold.ttf",
+        "sha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+        "bytes": 101384,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Bold.ttf",
+        "sha256": "7da349e4152d49167589a51a5e8d617061fd024f61c3f9765e252fa95993b33d",
+        "bytes": 2652,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Medium.ttf",
+        "sha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+        "bytes": 92856,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+        "sha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+        "bytes": 92856,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Krasar-Medium.ttf",
+        "sha256": "51805ae8d0902691403bd987116e1c6e46b6070ba4ed9920f688d54d8b053ab0",
+        "bytes": 16452,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MiSansKhmer-Normal.ttf",
+        "sha256": "3c1d52a7db25ef77004108566e0c9ea566b319b865c73ec904aaf47cdb17eba1",
+        "bytes": 65132,
+        "matchesReviewedFont": true
+      }
+    ],
+    "chapters": [
+      {
+        "name": "OEBPS/cover.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/Khmer_Women_of_the_word_Layout.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/toc.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      }
+    ],
+    "unchangedAssets": 9
+  },
+  {
+    "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+    "inputSha256": "c5de45ff132ebcc55bb91c731bf27f90b816060f9be9ac1b300c6bc514dd7902",
+    "outputSha256": "4e366d702c507aebd156e63483c1e913ba9d412b77d65dc756938124fd336d36",
+    "fonts": [
+      {
+        "name": "OEBPS/font/Calibri-Italic.ttf",
+        "sha256": "083b2c74d6f6368a6847b5c9259add4c4cc39047f183549e7ac04bc193d5310d",
+        "bytes": 99112,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Calibri.ttf",
+        "sha256": "2e35f631f21c18c535e859b9d5a4ee7904c9315336c638f68a5dd24f49e334f7",
+        "bytes": 116196,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Content-Bold.ttf",
+        "sha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+        "bytes": 306292,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Content.ttf",
+        "sha256": "12ef9ba30f5b9b53ac93616e5bcc0c6664ede603e623e6853615e56352f1f94e",
+        "bytes": 171116,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/ContentEnhanced.otf",
+        "sha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+        "bytes": 289568,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Bold.ttf",
+        "sha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+        "bytes": 92856,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+        "sha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+        "bytes": 92856,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/KhmerOureang-Ultra-expandedUltraBlack.ttf",
+        "sha256": "f4bfc26e973972a244c4c6d18acc17c84d7156913c24281795d34fa15318a9c4",
+        "bytes": 17356,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MinionPro-Regular.otf",
+        "sha256": "30d4873745edc4f7f1afd8436b205444a219026111716c2efb1318ee1b94852f",
+        "bytes": 35340,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/Moul.ttf",
+        "sha256": "e5020ad44384950707915226c0bf70adf865fb7631ae5b19ba2ed3c41402ddc1",
+        "bytes": 386968,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-Bold.otf",
+        "sha256": "0a5ccb72d05544938bbd7d8d64f0cf5ad7cc8a02d52ee48dcdc68ab37a07d544",
+        "bytes": 15736,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-BoldCond.otf",
+        "sha256": "76e27b3cea074300dacf77b59e4b975b9b0d24a66197f6674e418c9052bc5dad",
+        "bytes": 14744,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-Regular.otf",
+        "sha256": "4a1da60a534e066dadb5d6a032f249eca2c649fb91126d351ca2dc1d5bdd550c",
+        "bytes": 15140,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/MyriadPro-Semibold.otf",
+        "sha256": "d23bbdd56f2a3aa9644f566dcc53af795d5e8e79d38e556a1138e93cd62a189f",
+        "bytes": 15232,
+        "matchesReviewedFont": true
+      },
+      {
+        "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+        "sha256": "1083b82181e3719b689f218521ad41c9a1a1d62f4ca8c2742dde0560fdf32275",
+        "bytes": 11580,
+        "matchesReviewedFont": true
+      }
+    ],
+    "chapters": [
+      {
+        "name": "OEBPS/cover.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/WhatIsHealthyChurch_2022_-_Khmer_1.8.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      },
+      {
+        "name": "OEBPS/toc.xhtml",
+        "xmlValid": true,
+        "unicodeTextAndAuthoredBreaks": true,
+        "idsAndLinks": true
+      }
+    ],
+    "unchangedAssets": 9
   }
 ]

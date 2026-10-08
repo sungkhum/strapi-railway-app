@@ -7,7 +7,7 @@ const [source,out]=process.argv.slice(2);
 if(!source||!out) throw new Error('Usage: node --expose-gc benchmark.mjs input-directory output-directory');
 if(path.resolve(source)===path.resolve(out)) throw new Error('Use a separate output directory to preserve originals');
 await fs.mkdir(out,{recursive:true});const records=[],assets={};
-for(const filename of ['src/vendor/aksara/km_frequency_dictionary.json','src/vendor/aksara/km_kcc_tagger.json','dist/processor.cjs']) {
+for(const filename of ['src/vendor/aksara/km_frequency_dictionary.json','src/vendor/aksara/km_kcc_tagger.json','src/font-repair-data.json','dist/processor.cjs']) {
  const bytes=await fs.readFile(new URL(filename,import.meta.url));assets[path.basename(filename)]={bytes:bytes.length,gzipBytes:gzipSync(bytes).length};
 }
 let peakObservedRssBytes=process.memoryUsage().rss;
