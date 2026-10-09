@@ -1,0 +1,543 @@
+{
+  "environment": {
+    "node": "v22.15.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "icu": "76.1"
+  },
+  "assets": {
+    "km_frequency_dictionary.json": {
+      "bytes": 758047,
+      "gzipBytes": 168914
+    },
+    "km_kcc_tagger.json": {
+      "bytes": 1204747,
+      "gzipBytes": 268041
+    },
+    "font-repair-data.json": {
+      "bytes": 419295,
+      "gzipBytes": 307010
+    },
+    "processor.cjs": {
+      "bytes": 3800839,
+      "gzipBytes": 883346
+    }
+  },
+  "peakObservedRssBytes": 352174080,
+  "records": [
+    {
+      "book": "Confessions Khmer InDesign 4.7.epub",
+      "processed": true,
+      "reason": "khmer",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9863908389918288,
+      "words": 122202,
+      "breaks": 108156,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 1.0753750000000082
+        },
+        {
+          "name": "OEBPS/Confessions_Khmer_InDesign_4.7.xhtml",
+          "words": 121975,
+          "elapsedMs": 23684.180708
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 227,
+          "elapsedMs": 71.01966700000048
+        }
+      ],
+      "fonts": {
+        "version": "fonts-v3",
+        "decodedFonts": 14,
+        "repairedFonts": 3,
+        "resources": [
+          {
+            "name": "OEBPS/font/AngDaunKeo.ttf",
+            "sourceSha256": "fac48642ad42154d3dddaef51775b747ed41db24361c4bdbf56ffe0f5538351b",
+            "outputSha256": "d5c05f2272ae8b2874c61af0edee0d81884aa30cdf9c07f572c0f3f928ef5ae7",
+            "bytes": 62432
+          },
+          {
+            "name": "OEBPS/font/AngDaunsok.ttf",
+            "sourceSha256": "8e29e9734de6a6d7cd083df1729e21ff70159a0b69345df755fc0d57a5fa9b6e",
+            "outputSha256": "8e29e9734de6a6d7cd083df1729e21ff70159a0b69345df755fc0d57a5fa9b6e",
+            "bytes": 6400
+          },
+          {
+            "name": "OEBPS/font/Battambang.otf",
+            "sourceSha256": "16cc3a84ba51926382c5af7853a304fcc4168f4bced22c207cfb6b09f59c884d",
+            "outputSha256": "16cc3a84ba51926382c5af7853a304fcc4168f4bced22c207cfb6b09f59c884d",
+            "bytes": 14676
+          },
+          {
+            "name": "OEBPS/font/Bayon.ttf",
+            "sourceSha256": "d63d3d354b329dab7f28896788d4726eab1b9fa5e1dcc83d2f058bb52a48266b",
+            "outputSha256": "d63d3d354b329dab7f28896788d4726eab1b9fa5e1dcc83d2f058bb52a48266b",
+            "bytes": 74092
+          },
+          {
+            "name": "OEBPS/font/Content-Bold.ttf",
+            "sourceSha256": "75664925b34e4163d45d66954fd314a26e3b5bdd16f5574b247c85d197e8d23b",
+            "outputSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+            "bytes": 306292
+          },
+          {
+            "name": "OEBPS/font/Content.ttf",
+            "sourceSha256": "56e535ce2304ac146b7cafead5a73b1e93538e6ac42e9227be9c16d8ad213c54",
+            "outputSha256": "56e535ce2304ac146b7cafead5a73b1e93538e6ac42e9227be9c16d8ad213c54",
+            "bytes": 25720
+          },
+          {
+            "name": "OEBPS/font/ContentEnhanced.otf",
+            "sourceSha256": "c0dcd257984d1e3d5a7f92d0180f701e6e0d4786f3d26d860bbbcb94d270cdd9",
+            "outputSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+            "bytes": 289568
+          },
+          {
+            "name": "OEBPS/font/MinionPro-Regular.otf",
+            "sourceSha256": "b75c69f72737d14d4d65cbb4b809f90924dca7c32fb0f14e5f17f9c58dd5958b",
+            "outputSha256": "b75c69f72737d14d4d65cbb4b809f90924dca7c32fb0f14e5f17f9c58dd5958b",
+            "bytes": 27748
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-Regular.otf",
+            "sourceSha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+            "outputSha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+            "bytes": 15240
+          },
+          {
+            "name": "OEBPS/font/ObliquaSans-Italic.otf",
+            "sourceSha256": "08099d0573063f5a097051576d9752683c1473b73eaecde1c2017cfb2f9cf39d",
+            "outputSha256": "08099d0573063f5a097051576d9752683c1473b73eaecde1c2017cfb2f9cf39d",
+            "bytes": 8036
+          },
+          {
+            "name": "OEBPS/font/ObliquaSans.otf",
+            "sourceSha256": "5b493ceeefbc8902d84dacf6955f87eb01a5d5e8fc51538cc1c8734d8fb75398",
+            "outputSha256": "5b493ceeefbc8902d84dacf6955f87eb01a5d5e8fc51538cc1c8734d8fb75398",
+            "bytes": 13368
+          },
+          {
+            "name": "OEBPS/font/Raleway-Bold.ttf",
+            "sourceSha256": "1520bc8493e03a845ddf1a25f55e44c4ca249689658d8e71bafe7ad1450ff044",
+            "outputSha256": "1520bc8493e03a845ddf1a25f55e44c4ca249689658d8e71bafe7ad1450ff044",
+            "bytes": 46816
+          },
+          {
+            "name": "OEBPS/font/Raleway-Regular.ttf",
+            "sourceSha256": "7133f5a0fd45eb59ede0b6fe8c17f7cee9a8bf0c44a97847cd29baef6db421b0",
+            "outputSha256": "7133f5a0fd45eb59ede0b6fe8c17f7cee9a8bf0c44a97847cd29baef6db421b0",
+            "bytes": 45704
+          },
+          {
+            "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+            "sourceSha256": "1f0bbceeb17f56c9afc95a4334874d457fcd947d84b3366e50cf4f5286af11b5",
+            "outputSha256": "1f0bbceeb17f56c9afc95a4334874d457fcd947d84b3366e50cf4f5286af11b5",
+            "bytes": 11312
+          }
+        ],
+        "elapsedMs": 34.598415999999986
+      },
+      "initializationMs": 76.90083299999992,
+      "wrappedWords": 93308,
+      "elapsedMs": 24344.549667,
+      "inputBytes": 571217,
+      "outputBytes": 706759,
+      "heapBeforeBytes": 18559800,
+      "heapAfterBytes": 261115272,
+      "rssAfterBytes": 224722944
+    },
+    {
+      "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+      "processed": true,
+      "reason": "khmer",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9582287258207206,
+      "words": 105899,
+      "breaks": 90844,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.25324999999793363
+        },
+        {
+          "name": "OEBPS/Family_Life_of_Christian_Leader_-Khmer_4.2.xhtml",
+          "words": 105156,
+          "elapsedMs": 17310.465250000005
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 743,
+          "elapsedMs": 245.74412499999744
+        }
+      ],
+      "fonts": {
+        "version": "fonts-v3",
+        "decodedFonts": 12,
+        "repairedFonts": 4,
+        "resources": [
+          {
+            "name": "OEBPS/font/Bayon.ttf",
+            "sourceSha256": "bf49de4644f06971281e4cc3270dfaec808872fa889ac2fbc1222729a1f88f0f",
+            "outputSha256": "bf49de4644f06971281e4cc3270dfaec808872fa889ac2fbc1222729a1f88f0f",
+            "bytes": 85332
+          },
+          {
+            "name": "OEBPS/font/ContentEnhanced.otf",
+            "sourceSha256": "da687ce2fd0c39604a956c52f9a7f47bd6c0356e3a96d6ceca2763c493b2995e",
+            "outputSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+            "bytes": 289568
+          },
+          {
+            "name": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+            "sourceSha256": "479df31c5dfbb170b0d1df4fcb1b6c40a45a936195ea68bb50c34bc7b157be19",
+            "outputSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+            "bytes": 101384
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+            "sourceSha256": "e759a4a6ba5f0a0f37a33f1448220851db208435d94c0174307322b30ea351ad",
+            "outputSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+            "bytes": 92856
+          },
+          {
+            "name": "OEBPS/font/KhmerWatPhnom.ttf",
+            "sourceSha256": "3d09a81e3b3b71525c5c32eed2a37f2826b09e05b915c2ce732bc60fd115b95e",
+            "outputSha256": "f8bc3a7dea4e88e8263f3e7d051746f4e193194e00453eeb33baf5decadc452e",
+            "bytes": 115020
+          },
+          {
+            "name": "OEBPS/font/MinionPro-Regular.otf",
+            "sourceSha256": "61226f01f347e5a66c9399f399c90ac7b977fc4b5f073189ebc8150c83db9988",
+            "outputSha256": "61226f01f347e5a66c9399f399c90ac7b977fc4b5f073189ebc8150c83db9988",
+            "bytes": 15696
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-Regular.otf",
+            "sourceSha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+            "outputSha256": "80899fc87aca1090e9d2d767518616f2ebced122a472c788735315fbfe27003f",
+            "bytes": 15240
+          },
+          {
+            "name": "OEBPS/font/OpenSans.ttf",
+            "sourceSha256": "31a5503ba7f42dae7a97885c82d41fb55fcfb82d363b71f097b743aaa223b06a",
+            "outputSha256": "31a5503ba7f42dae7a97885c82d41fb55fcfb82d363b71f097b743aaa223b06a",
+            "bytes": 31300
+          },
+          {
+            "name": "OEBPS/font/Raleway-Regular.ttf",
+            "sourceSha256": "af70a889a38b302043ab66c861382678866a1be2d1c5923635d268e1e2769b69",
+            "outputSha256": "af70a889a38b302043ab66c861382678866a1be2d1c5923635d268e1e2769b69",
+            "bytes": 44232
+          },
+          {
+            "name": "OEBPS/font/SabonLTPro-Italic.otf",
+            "sourceSha256": "615284b710d1666fca689effeb1daa649648a40ddf12daf53dc27f45fd860746",
+            "outputSha256": "615284b710d1666fca689effeb1daa649648a40ddf12daf53dc27f45fd860746",
+            "bytes": 18592
+          },
+          {
+            "name": "OEBPS/font/SabonLTPro-Roman.otf",
+            "sourceSha256": "d0b1055f3b3b08cba3fb5ac81dda431f2502ce8f02d4240a04ec00cfcf59eee2",
+            "outputSha256": "d0b1055f3b3b08cba3fb5ac81dda431f2502ce8f02d4240a04ec00cfcf59eee2",
+            "bytes": 28016
+          },
+          {
+            "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+            "sourceSha256": "3b2269b59292103a8c9c7cdd7a94cbfe04265a2951c7ee9ac6d3c23dd668239f",
+            "outputSha256": "3b2269b59292103a8c9c7cdd7a94cbfe04265a2951c7ee9ac6d3c23dd668239f",
+            "bytes": 11980
+          }
+        ],
+        "elapsedMs": 16.113208999999188
+      },
+      "initializationMs": 0.0005840000012540258,
+      "wrappedWords": 81822,
+      "elapsedMs": 18508.202958,
+      "inputBytes": 3014737,
+      "outputBytes": 2895796,
+      "heapBeforeBytes": 42577256,
+      "heapAfterBytes": 247104288,
+      "rssAfterBytes": 352174080
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "processed": true,
+      "reason": "khmer",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9700880655936835,
+      "words": 61075,
+      "breaks": 53692,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.3332499999960419
+        },
+        {
+          "name": "OEBPS/Khmer_Women_of_the_word_Layout.xhtml",
+          "words": 60987,
+          "elapsedMs": 11428.647458
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 88,
+          "elapsedMs": 28.716166999998677
+        }
+      ],
+      "fonts": {
+        "version": "fonts-v3",
+        "decodedFonts": 14,
+        "repairedFonts": 8,
+        "resources": [
+          {
+            "name": "OEBPS/font/AdrianeText-Bold.otf",
+            "sourceSha256": "1948aa736ff9f5241c4a939d67c86bba9de4dee13041f6320684d791ad2d29a7",
+            "outputSha256": "1948aa736ff9f5241c4a939d67c86bba9de4dee13041f6320684d791ad2d29a7",
+            "bytes": 38708
+          },
+          {
+            "name": "OEBPS/font/AdrianeText-Italic.otf",
+            "sourceSha256": "1210f92082c4c48f75ddcc61904aaba4f6f4cf87108c0e25e745308d63a20941",
+            "outputSha256": "1210f92082c4c48f75ddcc61904aaba4f6f4cf87108c0e25e745308d63a20941",
+            "bytes": 48216
+          },
+          {
+            "name": "OEBPS/font/AdrianeText.otf",
+            "sourceSha256": "9b1649e67277582ad947acb5f04e7092114fc4c94f458ec687d2db0e95068d6f",
+            "outputSha256": "9b1649e67277582ad947acb5f04e7092114fc4c94f458ec687d2db0e95068d6f",
+            "bytes": 57536
+          },
+          {
+            "name": "OEBPS/font/Content-Bold.ttf",
+            "sourceSha256": "afc3b50a290eae6259013b98802463fb6a468810327780c9095ff0a7296b3b9c",
+            "outputSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+            "bytes": 306292
+          },
+          {
+            "name": "OEBPS/font/ContentEnhanced.otf",
+            "sourceSha256": "d56bbc8ac482097a00e3b95e51033d784ab4ede83da1d14d6272d6e1375ee7d8",
+            "outputSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+            "bytes": 289568
+          },
+          {
+            "name": "OEBPS/font/Kantumruy.ttf",
+            "sourceSha256": "b31bb5309e2726738fd56ecead4c368502fe37023b6e7cc35a9d2933ce0819c6",
+            "outputSha256": "b31bb5309e2726738fd56ecead4c368502fe37023b6e7cc35a9d2933ce0819c6",
+            "bytes": 13112
+          },
+          {
+            "name": "OEBPS/font/KantumruyProItalic-Medium.ttf",
+            "sourceSha256": "07fe346d01e8a745fdaf6d4cf12d544b722ba2dd01cffbb227a5f8e2d79ce497",
+            "outputSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+            "bytes": 101384
+          },
+          {
+            "name": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+            "sourceSha256": "ebcfe295abc088c61e57575726e08eb6ce191551c09e01ce4c977461a6ceed8a",
+            "outputSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+            "bytes": 101384
+          },
+          {
+            "name": "OEBPS/font/KantumruyProItalic-SemiBold.ttf",
+            "sourceSha256": "d970df62e8e503dc26753c3dcf0ab49c75a3b43270048aa7108a40b0614c41ad",
+            "outputSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+            "bytes": 101384
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Bold.ttf",
+            "sourceSha256": "7da349e4152d49167589a51a5e8d617061fd024f61c3f9765e252fa95993b33d",
+            "outputSha256": "7da349e4152d49167589a51a5e8d617061fd024f61c3f9765e252fa95993b33d",
+            "bytes": 2652
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Medium.ttf",
+            "sourceSha256": "42a4e741a74c6986f44724f74c4a71adc657000b46eb5b6a38fd7298117bde10",
+            "outputSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+            "bytes": 92856
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+            "sourceSha256": "551da0a4789587d1776b09487feb066c7f90e8f983d53b2bcc603de4098ccfa8",
+            "outputSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+            "bytes": 92856
+          },
+          {
+            "name": "OEBPS/font/Krasar-Medium.ttf",
+            "sourceSha256": "51805ae8d0902691403bd987116e1c6e46b6070ba4ed9920f688d54d8b053ab0",
+            "outputSha256": "51805ae8d0902691403bd987116e1c6e46b6070ba4ed9920f688d54d8b053ab0",
+            "bytes": 16452
+          },
+          {
+            "name": "OEBPS/font/MiSansKhmer-Normal.ttf",
+            "sourceSha256": "7fd1bcd523aa12fc81fa4ea10d3191acabbe7bfc17dc1b978ebff9babe369368",
+            "outputSha256": "3c1d52a7db25ef77004108566e0c9ea566b319b865c73ec904aaf47cdb17eba1",
+            "bytes": 65132
+          }
+        ],
+        "elapsedMs": 30.014208000000508
+      },
+      "initializationMs": 0.0010000000038417056,
+      "wrappedWords": 46621,
+      "elapsedMs": 11982.915290999998,
+      "inputBytes": 1801282,
+      "outputBytes": 2050641,
+      "heapBeforeBytes": 42902936,
+      "heapAfterBytes": 51411768,
+      "rssAfterBytes": 256606208
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "processed": true,
+      "reason": "khmer",
+      "version": "aksara-31740e9-kcc3-plovpit1",
+      "dictionaryEntries": 29599,
+      "modelFeatures": 39127,
+      "intlSegmenter": true,
+      "icuVersion": "76.1",
+      "khmerRatio": 0.9859837967365258,
+      "words": 45619,
+      "breaks": 39577,
+      "chapters": [
+        {
+          "name": "OEBPS/cover.xhtml",
+          "words": 0,
+          "elapsedMs": 0.24587500000052387
+        },
+        {
+          "name": "OEBPS/WhatIsHealthyChurch_2022_-_Khmer_1.8.xhtml",
+          "words": 45256,
+          "elapsedMs": 7858.134125000004
+        },
+        {
+          "name": "OEBPS/toc.xhtml",
+          "words": 363,
+          "elapsedMs": 111.9195830000026
+        }
+      ],
+      "fonts": {
+        "version": "fonts-v3",
+        "decodedFonts": 15,
+        "repairedFonts": 5,
+        "resources": [
+          {
+            "name": "OEBPS/font/Calibri-Italic.ttf",
+            "sourceSha256": "083b2c74d6f6368a6847b5c9259add4c4cc39047f183549e7ac04bc193d5310d",
+            "outputSha256": "083b2c74d6f6368a6847b5c9259add4c4cc39047f183549e7ac04bc193d5310d",
+            "bytes": 99112
+          },
+          {
+            "name": "OEBPS/font/Calibri.ttf",
+            "sourceSha256": "2e35f631f21c18c535e859b9d5a4ee7904c9315336c638f68a5dd24f49e334f7",
+            "outputSha256": "2e35f631f21c18c535e859b9d5a4ee7904c9315336c638f68a5dd24f49e334f7",
+            "bytes": 116196
+          },
+          {
+            "name": "OEBPS/font/Content-Bold.ttf",
+            "sourceSha256": "33297961391a8ed47e57344cb73b4205781e926d84ee4e6ffa84c11f2015266b",
+            "outputSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+            "bytes": 306292
+          },
+          {
+            "name": "OEBPS/font/Content.ttf",
+            "sourceSha256": "12ef9ba30f5b9b53ac93616e5bcc0c6664ede603e623e6853615e56352f1f94e",
+            "outputSha256": "12ef9ba30f5b9b53ac93616e5bcc0c6664ede603e623e6853615e56352f1f94e",
+            "bytes": 171116
+          },
+          {
+            "name": "OEBPS/font/ContentEnhanced.otf",
+            "sourceSha256": "017502a26000e3c2c889d6894dfab9143a421139714972a0ac0d287a1f6f9716",
+            "outputSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+            "bytes": 289568
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Bold.ttf",
+            "sourceSha256": "042e0437311f3a1c1277c848dbcaae371f4bf988bed434b804db690bc00e7b74",
+            "outputSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+            "bytes": 92856
+          },
+          {
+            "name": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+            "sourceSha256": "ff18b2b7f070565bf33851cf37f53f3e9e2a7b5dc4ddd863749059b3d46316ee",
+            "outputSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+            "bytes": 92856
+          },
+          {
+            "name": "OEBPS/font/KhmerOureang-Ultra-expandedUltraBlack.ttf",
+            "sourceSha256": "f4bfc26e973972a244c4c6d18acc17c84d7156913c24281795d34fa15318a9c4",
+            "outputSha256": "f4bfc26e973972a244c4c6d18acc17c84d7156913c24281795d34fa15318a9c4",
+            "bytes": 17356
+          },
+          {
+            "name": "OEBPS/font/MinionPro-Regular.otf",
+            "sourceSha256": "30d4873745edc4f7f1afd8436b205444a219026111716c2efb1318ee1b94852f",
+            "outputSha256": "30d4873745edc4f7f1afd8436b205444a219026111716c2efb1318ee1b94852f",
+            "bytes": 35340
+          },
+          {
+            "name": "OEBPS/font/Moul.ttf",
+            "sourceSha256": "a20e39a1f1687f73245501ffd724d5a81b8620652a4cd91e847071c48d2c1f7b",
+            "outputSha256": "e5020ad44384950707915226c0bf70adf865fb7631ae5b19ba2ed3c41402ddc1",
+            "bytes": 386968
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-Bold.otf",
+            "sourceSha256": "0a5ccb72d05544938bbd7d8d64f0cf5ad7cc8a02d52ee48dcdc68ab37a07d544",
+            "outputSha256": "0a5ccb72d05544938bbd7d8d64f0cf5ad7cc8a02d52ee48dcdc68ab37a07d544",
+            "bytes": 15736
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-BoldCond.otf",
+            "sourceSha256": "76e27b3cea074300dacf77b59e4b975b9b0d24a66197f6674e418c9052bc5dad",
+            "outputSha256": "76e27b3cea074300dacf77b59e4b975b9b0d24a66197f6674e418c9052bc5dad",
+            "bytes": 14744
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-Regular.otf",
+            "sourceSha256": "4a1da60a534e066dadb5d6a032f249eca2c649fb91126d351ca2dc1d5bdd550c",
+            "outputSha256": "4a1da60a534e066dadb5d6a032f249eca2c649fb91126d351ca2dc1d5bdd550c",
+            "bytes": 15140
+          },
+          {
+            "name": "OEBPS/font/MyriadPro-Semibold.otf",
+            "sourceSha256": "d23bbdd56f2a3aa9644f566dcc53af795d5e8e79d38e556a1138e93cd62a189f",
+            "outputSha256": "d23bbdd56f2a3aa9644f566dcc53af795d5e8e79d38e556a1138e93cd62a189f",
+            "bytes": 15232
+          },
+          {
+            "name": "OEBPS/font/TimesNewRomanPSMT.ttf",
+            "sourceSha256": "1083b82181e3719b689f218521ad41c9a1a1d62f4ca8c2742dde0560fdf32275",
+            "outputSha256": "1083b82181e3719b689f218521ad41c9a1a1d62f4ca8c2742dde0560fdf32275",
+            "bytes": 11580
+          }
+        ],
+        "elapsedMs": 46.90779100000509
+      },
+      "initializationMs": 0.0010410000031697564,
+      "wrappedWords": 34098,
+      "elapsedMs": 8369.636207999996,
+      "inputBytes": 833008,
+      "outputBytes": 981255,
+      "heapBeforeBytes": 40915840,
+      "heapAfterBytes": 63237904,
+      "rssAfterBytes": 205897728
+    }
+  ]
+}

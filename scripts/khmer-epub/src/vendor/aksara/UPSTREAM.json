@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/sbbic-khmer/aksara-khmer-word-processor",
+  "commit": "31740e9d51d38171ae6119fc2d18a4a18fbfb2f1",
+  "license": "MIT",
+  "files": "Core segmentation, boundary tagger, complete frequency dictionary, and model. Source behavior unchanged; trailing whitespace trimmed and JSON data losslessly compacted."
+}

@@ -1,0 +1,205 @@
+{
+  "fontToolsVersion": "4.66.1",
+  "fonts": [
+    {
+      "constant": "completeFont0",
+      "sourceFilename": "Content-Bold.ttf",
+      "sourceSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+      "replacementSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f",
+      "replacementBytes": 306292,
+      "weight": null,
+      "modifiedTimestamp": 3376377613,
+      "family": "Content",
+      "version": "Version 6.00 December 28, 2010",
+      "embeddingFlags": 8,
+      "copyright": "Copyright (c) 2010, Danh Hong (khmertype.blogspot.com),??with Reserved Font Name Khmer OS Content.??This Font Software is licensed under the SIL Open Font License, Version 1.1.??This license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "license": null,
+      "licenseUrl": null
+    },
+    {
+      "constant": "completeFont1",
+      "sourceFilename": "Khmer-Content-Enhanced-Regular_0.otf",
+      "sourceSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+      "replacementSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc",
+      "replacementBytes": 289568,
+      "weight": null,
+      "modifiedTimestamp": 3554574321,
+      "family": "Content Enhanced",
+      "version": "Version 3.30 August 20, 2016",
+      "embeddingFlags": 8,
+      "copyright": "Copyright (c) 2010, Danh Hong (khmertype.blogspot.com),\r\nwith Reserved Font Name Content.\r\nThis Font Software is licensed under the SIL Open Font License, Version 1.1.\r\nThis license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "license": "This font is made with the home edition of FontCreator. You may not use this font for commercial purposes.",
+      "licenseUrl": "http://www.high-logic.com/fontcreator/fontlicense.html"
+    },
+    {
+      "constant": "completeFont2",
+      "sourceFilename": "KantumruyPro-Italic-VariableFont_wght.ttf",
+      "sourceSha256": "3f684afce69d075220343da625547ab58566a02574e54cd2c5198393c4aeaed7",
+      "replacementSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8",
+      "replacementBytes": 101384,
+      "weight": 400,
+      "modifiedTimestamp": 3874253443,
+      "family": "Kantumruy Pro",
+      "version": "Version 1.002",
+      "embeddingFlags": 0,
+      "copyright": "Copyright 2022 The Kantumruy Project Authors (https://www.github.com/sovichet/kantumruy-pro)",
+      "license": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL",
+      "licenseUrl": "https://scripts.sil.org/OFL"
+    },
+    {
+      "constant": "completeFont3",
+      "sourceFilename": "KantumruyPro-VariableFont_wght.ttf",
+      "sourceSha256": "6d2b0011a232377bde7f22f9ec1541de69a8a594380d129a328405a5f94e20f4",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9",
+      "replacementBytes": 92856,
+      "weight": 400,
+      "modifiedTimestamp": 3874253443,
+      "family": "Kantumruy Pro",
+      "version": "Version 1.002",
+      "embeddingFlags": 0,
+      "copyright": "Copyright 2022 The Kantumruy Project Authors (https://www.github.com/sovichet/kantumruy-pro)",
+      "license": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL",
+      "licenseUrl": "https://scripts.sil.org/OFL"
+    },
+    {
+      "constant": "completeFont4",
+      "sourceFilename": "Moul.ttf",
+      "sourceSha256": "e5020ad44384950707915226c0bf70adf865fb7631ae5b19ba2ed3c41402ddc1",
+      "replacementSha256": "e5020ad44384950707915226c0bf70adf865fb7631ae5b19ba2ed3c41402ddc1",
+      "replacementBytes": 386968,
+      "weight": null,
+      "modifiedTimestamp": 3376380251,
+      "family": "Moul",
+      "version": "Version 6.00 December 28, 2010",
+      "embeddingFlags": 8,
+      "copyright": "Copyright (c) 2010, Danh Hong (khmertype.blogspot.com),??with Reserved Font Name Khmer OS Moul.??This Font Software is licensed under the SIL Open Font License, Version 1.1.??This license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "license": null,
+      "licenseUrl": null
+    },
+    {
+      "constant": "completeFont5",
+      "sourceFilename": "MiSansKhmer-Normal.ttf",
+      "sourceSha256": "3c1d52a7db25ef77004108566e0c9ea566b319b865c73ec904aaf47cdb17eba1",
+      "replacementSha256": "3c1d52a7db25ef77004108566e0c9ea566b319b865c73ec904aaf47cdb17eba1",
+      "replacementBytes": 65132,
+      "weight": null,
+      "modifiedTimestamp": 3800917452,
+      "family": "MiSans Khmer Normal",
+      "version": "Version 1.200",
+      "embeddingFlags": 8,
+      "copyright": "Copyright © 2023-2024 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved.",
+      "license": null,
+      "licenseUrl": null
+    }
+  ],
+  "subsets": [
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/Content-Bold.ttf",
+      "sourceSha256": "afc3b50a290eae6259013b98802463fb6a468810327780c9095ff0a7296b3b9c",
+      "replacementSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/ContentEnhanced.otf",
+      "sourceSha256": "d56bbc8ac482097a00e3b95e51033d784ab4ede83da1d14d6272d6e1375ee7d8",
+      "replacementSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/KantumruyProItalic-Medium.ttf",
+      "sourceSha256": "07fe346d01e8a745fdaf6d4cf12d544b722ba2dd01cffbb227a5f8e2d79ce497",
+      "replacementSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+      "sourceSha256": "ebcfe295abc088c61e57575726e08eb6ce191551c09e01ce4c977461a6ceed8a",
+      "replacementSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/KantumruyProItalic-SemiBold.ttf",
+      "sourceSha256": "d970df62e8e503dc26753c3dcf0ab49c75a3b43270048aa7108a40b0614c41ad",
+      "replacementSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/KantumruyProRoman-Medium.ttf",
+      "sourceSha256": "42a4e741a74c6986f44724f74c4a71adc657000b46eb5b6a38fd7298117bde10",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+      "sourceSha256": "551da0a4789587d1776b09487feb066c7f90e8f983d53b2bcc603de4098ccfa8",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9"
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "resource": "OEBPS/font/Content-Bold.ttf",
+      "sourceSha256": "33297961391a8ed47e57344cb73b4205781e926d84ee4e6ffa84c11f2015266b",
+      "replacementSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f"
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "resource": "OEBPS/font/ContentEnhanced.otf",
+      "sourceSha256": "017502a26000e3c2c889d6894dfab9143a421139714972a0ac0d287a1f6f9716",
+      "replacementSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc"
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "resource": "OEBPS/font/KantumruyProRoman-Bold.ttf",
+      "sourceSha256": "042e0437311f3a1c1277c848dbcaae371f4bf988bed434b804db690bc00e7b74",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9"
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "resource": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+      "sourceSha256": "ff18b2b7f070565bf33851cf37f53f3e9e2a7b5dc4ddd863749059b3d46316ee",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9"
+    },
+    {
+      "book": "WhatIsHealthyChurch 2022 - Khmer 1.8.epub",
+      "resource": "OEBPS/font/Moul.ttf",
+      "sourceSha256": "a20e39a1f1687f73245501ffd724d5a81b8620652a4cd91e847071c48d2c1f7b",
+      "replacementSha256": "e5020ad44384950707915226c0bf70adf865fb7631ae5b19ba2ed3c41402ddc1"
+    },
+    {
+      "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+      "resource": "OEBPS/font/ContentEnhanced.otf",
+      "sourceSha256": "da687ce2fd0c39604a956c52f9a7f47bd6c0356e3a96d6ceca2763c493b2995e",
+      "replacementSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc"
+    },
+    {
+      "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+      "resource": "OEBPS/font/KantumruyProItalic-Regular.ttf",
+      "sourceSha256": "479df31c5dfbb170b0d1df4fcb1b6c40a45a936195ea68bb50c34bc7b157be19",
+      "replacementSha256": "7f3624827847a8ebe51c52e54a8d1bc5468f99c4a2aa831e13a6a8caa94be7a8"
+    },
+    {
+      "book": "Family Life of Christian Leader -Khmer 4.2.epub",
+      "resource": "OEBPS/font/KantumruyProRoman-Regular.ttf",
+      "sourceSha256": "e759a4a6ba5f0a0f37a33f1448220851db208435d94c0174307322b30ea351ad",
+      "replacementSha256": "7752d05dd70d35c5d3a9d202e4db5f64657e9ff8913c55af5e4f19883c3baad9"
+    },
+    {
+      "book": "Confessions Khmer InDesign 4.7.epub",
+      "resource": "OEBPS/font/Content-Bold.ttf",
+      "sourceSha256": "75664925b34e4163d45d66954fd314a26e3b5bdd16f5574b247c85d197e8d23b",
+      "replacementSha256": "3242d6b22201e6919c784a6d95d0284bc36ef6b38785fe002a8cfab18a3f841f"
+    },
+    {
+      "book": "Confessions Khmer InDesign 4.7.epub",
+      "resource": "OEBPS/font/ContentEnhanced.otf",
+      "sourceSha256": "c0dcd257984d1e3d5a7f92d0180f701e6e0d4786f3d26d860bbbcb94d270cdd9",
+      "replacementSha256": "0892d3d9137d945c4993f9e3cc3095fe27cccfd6c49725e2bf710b7faa0d53dc"
+    },
+    {
+      "book": "Khmer Women of the word_Layout.epub",
+      "resource": "OEBPS/font/MiSansKhmer-Normal.ttf",
+      "sourceSha256": "7fd1bcd523aa12fc81fa4ea10d3191acabbe7bfc17dc1b978ebff9babe369368",
+      "replacementSha256": "3c1d52a7db25ef77004108566e0c9ea566b319b865c73ec904aaf47cdb17eba1"
+    }
+  ]
+}
