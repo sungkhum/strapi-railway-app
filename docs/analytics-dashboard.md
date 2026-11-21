@@ -67,6 +67,45 @@ between old and new anonymous installations, but does not affect content.
 `ANALYTICS_RETENTION_DAYS` defaults to 90 and cannot be set below 31. A daily
 cron task removes older events at 03:00 UTC.
 
+## Insights export
+
+The reporting dashboard (`plovpit-insights`) reads daily aggregates from:
+
+```text
+GET /api/analytics/insights?from=YYYY-MM-DD&to=YYYY-MM-DD
+Authorization: Bearer <INSIGHTS_EXPORT_TOKEN>
+```
+
+It only reads, and it is closed by default:
+
+- It answers 404 until `INSIGHTS_EXPORT_TOKEN` is set to at least 32
+  characters (`openssl rand -hex 32`). Give the same value to the dashboard.
+- The token is accepted only in the `Authorization` header, never in the URL,
+  and is compared in constant time.
+- Strapi roles and API tokens cannot open it, so a permission ticked by
+  mistake in the admin does not expose it.
+- Ten wrong tokens a minute per address are answered, then 429. Valid calls
+  are limited to thirty a minute, one at a time.
+- Each export is logged with the caller's address, and refusals are logged
+  until that address reaches its limit. Attempts are counted against
+  `X-Real-IP`, which the platform's proxy sets, rather than the first
+  `X-Forwarded-For` entry, which the caller controls.
+- To revoke access, change or remove the variable and redeploy.
+
+The range defaults to the last 30 days and may cover at most 62.
+
+Events are read a page at a time and summarized as they arrive, so the raw
+events are never held in memory. An export stops at 500,000 events and returns
+`truncated: true`; the newest days are then incomplete. Only books in the
+published catalog are counted per book, because book identifiers arrive from
+the public ingestion endpoint as free text.
+
+For each UTC day it returns active installations (that day, and rolling 7 and
+28 days), listening seconds, event counts by name, active installations by
+platform and the ten most used books. It also returns the published book count
+and the lifetime counter totals. Installation hashes are used to count
+distinct installations and are never part of the response.
+
 ## Privacy contract
 
 The endpoint accepts an allowlist of event names and properties. It rejects

@@ -18,5 +18,15 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "GET",
+      path: "/analytics/insights",
+      handler: "api::analytics-event.analytics-event.insights",
+      config: {
+        // Not public: the controller requires INSIGHTS_EXPORT_TOKEN. Strapi's own
+        // auth is skipped so that no role or API token in the admin can open it.
+        auth: false,
+      },
+    },
   ],
 };
