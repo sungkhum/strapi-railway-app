@@ -148,3 +148,186 @@ test("loads the lookback window, pages through events and totals the catalog", a
     lifetime: { views: 140, audioPlays: 20, bookOpens: 8, downloads: 3 },
   });
 });
+
+const controller = require("../src/api/analytics-event/controllers/analytics-event");
+
+const TOKEN = "a".repeat(40);
+
+const createCtx = ({ authorization, query = {}, ip = "203.0.113.7" } = {}) => {
+  const ctx = {
+    ip,
+    query,
+    request: { headers: authorization ? { authorization } : {} },
+    headers: {},
+    status: 200,
+    body: undefined,
+    set(name, value) {
+      this.headers[name] = value;
+    },
+    notFound() {
+      this.status = 404;
+    },
+    unauthorized(message) {
+      this.status = 401;
+      this.body = { error: message };
+    },
+    badRequest(message) {
+      this.status = 400;
+      this.body = { error: message };
+    },
+    internalServerError(message) {
+      this.status = 500;
+      this.body = { error: message };
+    },
+  };
+  return ctx;
+};
+
+const withStrapi = async (run, { failing = false, onLoad } = {}) => {
+  const previous = { strapi: global.strapi, token: process.env.INSIGHTS_EXPORT_TOKEN };
+  const logs = [];
+  global.strapi = {
+    log: {
+      info: (message) => logs.push(["info", message]),
+      warn: (message) => logs.push(["warn", message]),
+      error: (message) => logs.push(["error", message]),
+    },
+    db: {
+      query: () => ({
+        async findMany() {
+          if (onLoad) await onLoad();
+          if (failing) throw new Error("database is down");
+          return [];
+        },
+      }),
+    },
+    documents: () => ({ findMany: async () => [] }),
+  };
+  try {
+    await run(logs);
+  } finally {
+    global.strapi = previous.strapi;
+    if (previous.token === undefined) delete process.env.INSIGHTS_EXPORT_TOKEN;
+    else process.env.INSIGHTS_EXPORT_TOKEN = previous.token;
+  }
+};
+
+test("hides the export while no strong token is configured", async () => {
+  await withStrapi(async () => {
+    delete process.env.INSIGHTS_EXPORT_TOKEN;
+    const off = createCtx({ authorization: "Bearer anything" });
+    await controller.insights(off);
+    assert.equal(off.status, 404);
+
+    process.env.INSIGHTS_EXPORT_TOKEN = "short-token";
+    const weak = createCtx({ authorization: "Bearer short-token", ip: "203.0.113.8" });
+    await controller.insights(weak);
+    assert.equal(weak.status, 404);
+    assert.equal(weak.body, undefined);
+  });
+});
+
+test("refuses a missing or wrong token and never caches the answer", async () => {
+  await withStrapi(async (logs) => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    for (const authorization of [undefined, "Bearer wrong", `Basic ${TOKEN}`, TOKEN]) {
+      const ctx = createCtx({ authorization, ip: "203.0.113.20" });
+      await controller.insights(ctx);
+      assert.equal(ctx.status, 401);
+      assert.equal(ctx.headers["Cache-Control"], "no-store");
+      assert.equal(JSON.stringify(ctx.body).includes(TOKEN), false);
+    }
+    assert.equal(logs.filter(([level]) => level === "warn").length, 4);
+    assert.equal(logs.some(([, message]) => message.includes(TOKEN)), false);
+  });
+});
+
+test("ignores a token passed in the URL", async () => {
+  await withStrapi(async () => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    const ctx = createCtx({ query: { token: TOKEN, access_token: TOKEN }, ip: "203.0.113.21" });
+    await controller.insights(ctx);
+    assert.equal(ctx.status, 401);
+  });
+});
+
+test("slows guessing without locking out the real caller", async () => {
+  await withStrapi(async () => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    const statuses = [];
+    for (let attempt = 0; attempt < 12; attempt += 1) {
+      const ctx = createCtx({ authorization: "Bearer guess", ip: "203.0.113.30" });
+      await controller.insights(ctx);
+      statuses.push(ctx.status);
+    }
+    assert.deepEqual(statuses.slice(0, 10), Array(10).fill(401));
+    assert.deepEqual(statuses.slice(10), [429, 429]);
+
+    const valid = createCtx({
+      authorization: `Bearer ${TOKEN}`,
+      query: { from: "2026-11-01", to: "2026-11-02" },
+      ip: "203.0.113.30",
+    });
+    await controller.insights(valid);
+    assert.equal(valid.status, 200);
+    assert.equal(valid.body.days.length, 2);
+  });
+});
+
+test("serves a valid caller, validates the range and logs the export", async () => {
+  await withStrapi(async (logs) => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    const bad = createCtx({ authorization: `Bearer ${TOKEN}`, query: { from: "2026-01-01", to: "2026-11-01" }, ip: "203.0.113.40" });
+    await controller.insights(bad);
+    assert.equal(bad.status, 400);
+
+    const ok = createCtx({ authorization: `bearer ${TOKEN}`, query: { from: "2026-11-01", to: "2026-11-01" }, ip: "203.0.113.40" });
+    await controller.insights(ok);
+    assert.equal(ok.status, 200);
+    assert.equal(ok.headers["X-Content-Type-Options"], "nosniff");
+    assert.deepEqual(Object.keys(ok.body).sort(), ["catalog", "days", "from", "generatedAt", "retentionDays", "to", "truncated"]);
+    assert.ok(logs.some(([level, message]) => level === "info" && message.includes("2026-11-01..2026-11-01")));
+  });
+});
+
+test("runs one export at a time and recovers after a failure", async () => {
+  let release;
+  const gate = new Promise((resolve) => {
+    release = resolve;
+  });
+  await withStrapi(
+    async () => {
+      process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+      const first = createCtx({ authorization: `Bearer ${TOKEN}`, ip: "203.0.113.50" });
+      const running = controller.insights(first);
+      await new Promise((resolve) => setImmediate(resolve));
+
+      const second = createCtx({ authorization: `Bearer ${TOKEN}`, ip: "203.0.113.50" });
+      await controller.insights(second);
+      assert.equal(second.status, 429);
+
+      release();
+      await running;
+      assert.equal(first.status, 200);
+    },
+    { onLoad: () => gate }
+  );
+
+  await withStrapi(
+    async () => {
+      process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+      const failed = createCtx({ authorization: `Bearer ${TOKEN}`, ip: "203.0.113.51" });
+      await controller.insights(failed);
+      assert.equal(failed.status, 500);
+      assert.equal(JSON.stringify(failed.body).includes("database is down"), false);
+    },
+    { failing: true }
+  );
+
+  await withStrapi(async () => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    const after = createCtx({ authorization: `Bearer ${TOKEN}`, ip: "203.0.113.52" });
+    await controller.insights(after);
+    assert.equal(after.status, 200);
+  });
+});

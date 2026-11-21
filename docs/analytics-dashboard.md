@@ -76,9 +76,20 @@ GET /api/analytics/insights?from=YYYY-MM-DD&to=YYYY-MM-DD
 Authorization: Bearer <INSIGHTS_EXPORT_TOKEN>
 ```
 
-The endpoint is off until `INSIGHTS_EXPORT_TOKEN` is set; use a long random
-value and give the same value to the dashboard. A request without the token is
-rejected. The range defaults to the last 30 days and may cover at most 62.
+It only reads, and it is closed by default:
+
+- It answers 404 until `INSIGHTS_EXPORT_TOKEN` is set to at least 32
+  characters (`openssl rand -hex 32`). Give the same value to the dashboard.
+- The token is accepted only in the `Authorization` header, never in the URL,
+  and is compared in constant time.
+- Strapi roles and API tokens cannot open it, so a permission ticked by
+  mistake in the admin does not expose it.
+- Ten wrong tokens a minute per address are answered, then 429. Valid calls
+  are limited to thirty a minute, one at a time.
+- Each export and each refusal is logged with the caller's address.
+- To revoke access, change or remove the variable and redeploy.
+
+The range defaults to the last 30 days and may cover at most 62.
 
 For each UTC day it returns active installations (that day, and rolling 7 and
 28 days), listening seconds, event counts by name, active installations by

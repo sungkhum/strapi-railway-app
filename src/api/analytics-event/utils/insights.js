@@ -38,6 +38,14 @@ const tokenMatches = (given, expected) => {
   return crypto.timingSafeEqual(left, right);
 };
 
+const MIN_TOKEN_LENGTH = 32;
+
+/** The configured token, or null when it is missing or too short to resist guessing. */
+const exportToken = (value) => {
+  const token = String(value || "").trim();
+  return token.length >= MIN_TOKEN_LENGTH ? token : null;
+};
+
 const bearerToken = (header) => {
   const match = /^Bearer\s+(.+)$/i.exec(String(header || ""));
   return match ? match[1].trim() : "";
@@ -220,6 +228,7 @@ module.exports = {
   MAX_RANGE_DAYS,
   aggregateInsights,
   bearerToken,
+  exportToken,
   loadInsights,
   parseRange,
   summarizeCatalog,

@@ -4,6 +4,7 @@ const { AnalyticsValidationError } = require("../utils/contract");
 const {
   InsightsRangeError,
   bearerToken,
+  exportToken,
   loadInsights,
   parseRange,
   tokenMatches,
@@ -12,7 +13,10 @@ const {
 const windows = new Map();
 const WINDOW_MS = 60 * 1000;
 const REQUESTS_PER_WINDOW = 120;
+const EXPORTS_PER_WINDOW = 30;
+const DENIED_PER_WINDOW = 10;
 let lastCleanupAt = 0;
+let exporting = false;
 
 const removeExpiredWindows = (now) => {
   if (now - lastCleanupAt < WINDOW_MS) return;
@@ -22,14 +26,18 @@ const removeExpiredWindows = (now) => {
   }
 };
 
-const consumeRateLimit = (key, now = Date.now()) => {
+const consumeRateLimit = (
+  key,
+  now = Date.now(),
+  limit = REQUESTS_PER_WINDOW
+) => {
   removeExpiredWindows(now);
   const current = windows.get(key);
   if (!current || current.resetAt <= now) {
     windows.set(key, { count: 1, resetAt: now + WINDOW_MS });
     return true;
   }
-  if (current.count >= REQUESTS_PER_WINDOW) return false;
+  if (current.count >= limit) return false;
   current.count += 1;
   return true;
 };
@@ -79,34 +87,66 @@ module.exports = {
   },
 
   /**
-   * Daily aggregates for the reporting dashboard. Off until INSIGHTS_EXPORT_TOKEN is set;
-   * the caller must send that token as a bearer token.
+   * Daily aggregates for the reporting dashboard: read-only, and closed unless
+   * INSIGHTS_EXPORT_TOKEN holds a strong token that the caller sends as a bearer token.
    */
   async insights(ctx) {
-    const expected = process.env.INSIGHTS_EXPORT_TOKEN;
-    if (!expected) {
-      ctx.status = 503;
-      ctx.body = { error: "The insights export is not enabled" };
-      return;
+    ctx.set("Cache-Control", "no-store");
+    ctx.set("X-Content-Type-Options", "nosniff");
+
+    const expected = exportToken(process.env.INSIGHTS_EXPORT_TOKEN);
+    // While it is off, the route answers like any unknown path.
+    if (!expected) return ctx.notFound();
+
+    const given = bearerToken(ctx.request.headers.authorization);
+    if (!tokenMatches(given, expected)) {
+      // Wrong tokens get their own small budget, so guessing is slow and cannot
+      // use up the allowance of the real caller.
+      const allowed = consumeRateLimit(
+        `insights-denied:${ctx.ip}`,
+        Date.now(),
+        DENIED_PER_WINDOW
+      );
+      strapi.log.warn(`Analytics insights export refused for ${ctx.ip}`);
+      if (!allowed) {
+        ctx.status = 429;
+        ctx.body = { error: "Too many insights requests" };
+        return;
+      }
+      return ctx.unauthorized("A valid insights token is required");
     }
-    if (!consumeRateLimit(`insights:${ctx.ip}`)) {
+
+    if (
+      !consumeRateLimit(`insights:${ctx.ip}`, Date.now(), EXPORTS_PER_WINDOW) ||
+      exporting
+    ) {
       ctx.status = 429;
       ctx.body = { error: "Too many insights requests" };
       return;
     }
-    if (!tokenMatches(bearerToken(ctx.request.headers.authorization), expected)) {
-      return ctx.unauthorized("A valid insights token is required");
-    }
 
+    let range;
     try {
-      ctx.set("Cache-Control", "no-store");
-      ctx.body = await loadInsights(strapi, parseRange(ctx.query));
+      range = parseRange(ctx.query);
     } catch (error) {
       if (error instanceof InsightsRangeError) {
         return ctx.badRequest(error.message);
       }
+      throw error;
+    }
+
+    // One export at a time: each loads weeks of events into memory.
+    exporting = true;
+    try {
+      ctx.body = await loadInsights(strapi, range);
+      strapi.log.info(
+        `Analytics insights exported for ${range.from}..${range.to} to ${ctx.ip}`
+      );
+    } catch (error) {
       strapi.log.error("Analytics insights export failed", error);
       return ctx.internalServerError("Analytics insights export failed");
+    } finally {
+      exporting = false;
     }
   },
 };
