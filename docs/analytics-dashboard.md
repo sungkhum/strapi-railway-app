@@ -67,6 +67,25 @@ between old and new anonymous installations, but does not affect content.
 `ANALYTICS_RETENTION_DAYS` defaults to 90 and cannot be set below 31. A daily
 cron task removes older events at 03:00 UTC.
 
+## Insights export
+
+The reporting dashboard (`plovpit-insights`) reads daily aggregates from:
+
+```text
+GET /api/analytics/insights?from=YYYY-MM-DD&to=YYYY-MM-DD
+Authorization: Bearer <INSIGHTS_EXPORT_TOKEN>
+```
+
+The endpoint is off until `INSIGHTS_EXPORT_TOKEN` is set; use a long random
+value and give the same value to the dashboard. A request without the token is
+rejected. The range defaults to the last 30 days and may cover at most 62.
+
+For each UTC day it returns active installations (that day, and rolling 7 and
+28 days), listening seconds, event counts by name, active installations by
+platform and the ten most used books. It also returns the published book count
+and the lifetime counter totals. Installation hashes are used to count
+distinct installations and are never part of the response.
+
 ## Privacy contract
 
 The endpoint accepts an allowlist of event names and properties. It rejects

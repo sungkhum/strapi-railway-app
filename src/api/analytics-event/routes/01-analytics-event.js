@@ -18,5 +18,14 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "GET",
+      path: "/analytics/insights",
+      handler: "api::analytics-event.analytics-event.insights",
+      config: {
+        // The controller checks INSIGHTS_EXPORT_TOKEN itself.
+        auth: false,
+      },
+    },
   ],
 };
