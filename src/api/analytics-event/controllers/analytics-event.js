@@ -42,6 +42,16 @@ const consumeRateLimit = (
   return true;
 };
 
+/**
+ * The address to count attempts against. The platform's proxy sets X-Real-IP itself, while
+ * the first X-Forwarded-For entry, which `ctx.ip` reads, is whatever the caller sent.
+ */
+const callerAddress = (ctx) => {
+  const real = ctx.request.headers["x-real-ip"];
+  const value = (Array.isArray(real) ? real[0] : real) || ctx.ip || "unknown";
+  return String(value).trim().slice(0, 64);
+};
+
 module.exports = {
   async ingest(ctx) {
     if (!consumeRateLimit(`ingest:${ctx.ip}`)) {
@@ -98,16 +108,20 @@ module.exports = {
     // While it is off, the route answers like any unknown path.
     if (!expected) return ctx.notFound();
 
+    const address = callerAddress(ctx);
     const given = bearerToken(ctx.request.headers.authorization);
     if (!tokenMatches(given, expected)) {
       // Wrong tokens get their own small budget, so guessing is slow and cannot
       // use up the allowance of the real caller.
       const allowed = consumeRateLimit(
-        `insights-denied:${ctx.ip}`,
+        `insights-denied:${address}`,
         Date.now(),
         DENIED_PER_WINDOW
       );
-      strapi.log.warn(`Analytics insights export refused for ${ctx.ip}`);
+      // Logged only within the budget, so a flood cannot fill the log.
+      if (allowed) {
+        strapi.log.warn(`Analytics insights export refused for ${address}`);
+      }
       if (!allowed) {
         ctx.status = 429;
         ctx.body = { error: "Too many insights requests" };
@@ -117,7 +131,7 @@ module.exports = {
     }
 
     if (
-      !consumeRateLimit(`insights:${ctx.ip}`, Date.now(), EXPORTS_PER_WINDOW) ||
+      !consumeRateLimit(`insights:${address}`, Date.now(), EXPORTS_PER_WINDOW) ||
       exporting
     ) {
       ctx.status = 429;
@@ -140,7 +154,7 @@ module.exports = {
     try {
       ctx.body = await loadInsights(strapi, range);
       strapi.log.info(
-        `Analytics insights exported for ${range.from}..${range.to} to ${ctx.ip}`
+        `Analytics insights exported for ${range.from}..${range.to} to ${address}`
       );
     } catch (error) {
       strapi.log.error("Analytics insights export failed", error);

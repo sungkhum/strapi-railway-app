@@ -7,6 +7,8 @@ const {
   InsightsRangeError,
   aggregateInsights,
   bearerToken,
+  MAX_EVENTS,
+  PAGE_SIZE,
   loadInsights,
   parseRange,
   tokenMatches,
@@ -95,6 +97,8 @@ test("defaults to the last 30 days and rejects bad ranges", () => {
   assert.deepEqual(parseRange({}, now), { from: "2026-10-21", to: "2026-11-19" });
   assert.deepEqual(parseRange({ from: "2026-11-01", to: "2026-11-05" }, now), { from: "2026-11-01", to: "2026-11-05" });
   assert.throws(() => parseRange({ from: "nonsense" }, now), InsightsRangeError);
+  assert.throws(() => parseRange({ to: "nonsense" }, now), InsightsRangeError);
+  assert.throws(() => parseRange({ to: "2026-02-31" }, now), InsightsRangeError);
   assert.throws(() => parseRange({ from: "2026-11-05", to: "2026-11-01" }, now), InsightsRangeError);
   assert.throws(() => parseRange({ from: "2026-01-01", to: "2026-11-01" }, now), InsightsRangeError);
 });
@@ -119,7 +123,7 @@ test("loads the lookback window, pages through events and totals the catalog", a
           async findMany(params) {
             queries.push(params);
             assert.equal(params.select.includes("eventId"), false);
-            return params.offset === 0 ? [event({ bookDocumentId: "book-a" })] : [];
+            return [{ id: 7, ...event({ bookDocumentId: "book-a" }) }];
           },
         };
       },
@@ -140,7 +144,9 @@ test("loads the lookback window, pages through events and totals the catalog", a
   assert.equal(queries.length, 1);
   assert.deepEqual(queries[0].where, {
     occurredAt: { $gte: "2026-10-14T00:00:00.000Z", $lt: "2026-11-11T00:00:00.000Z" },
+    id: { $gt: 0 },
   });
+  assert.deepEqual(queries[0].orderBy, { id: "asc" });
   assert.equal(result.truncated, false);
   assert.equal(result.days[0].activeInstallations, 1);
   assert.deepEqual(result.catalog, {
@@ -329,5 +335,62 @@ test("runs one export at a time and recovers after a failure", async () => {
     const after = createCtx({ authorization: `Bearer ${TOKEN}`, ip: "203.0.113.52" });
     await controller.insights(after);
     assert.equal(after.status, 200);
+  });
+});
+
+test("counts only published books, so free text from the public endpoint never reaches the export", () => {
+  const planted = "someone@example.com";
+  const events = [];
+  for (let index = 0; index < 50; index += 1) events.push(event({ bookDocumentId: planted }));
+  events.push(event({ bookDocumentId: "book-a" }));
+  const [day] = aggregateInsights(events, books, { from: "2026-11-10", to: "2026-11-10" });
+
+  assert.deepEqual(day.topBooks, [
+    { documentId: "book-a", views: 1, audioStarts: 0, ebookOpens: 0, title: "Book A" },
+  ]);
+  assert.equal(JSON.stringify(day).includes(planted), false);
+  // The events themselves still count toward the day's totals.
+  assert.equal(day.events.book_detail_viewed, 51);
+});
+
+test("walks the events by primary key and stops at the event budget", async () => {
+  const wheres = [];
+  let nextId = 1;
+  const strapi = {
+    db: {
+      query: () => ({
+        async findMany(params) {
+          wheres.push(params.where.id.$gt);
+          assert.equal(params.limit, PAGE_SIZE);
+          assert.equal(params.offset, undefined);
+          return Array.from({ length: PAGE_SIZE }, () => ({ id: nextId++, ...event() }));
+        },
+      }),
+    },
+    documents: () => ({ findMany: async () => books }),
+  };
+
+  const result = await loadInsights(strapi, { from: "2026-11-10", to: "2026-11-10" });
+
+  assert.equal(result.truncated, true);
+  assert.equal(wheres.length, MAX_EVENTS / PAGE_SIZE);
+  assert.deepEqual(wheres.slice(0, 3), [0, PAGE_SIZE, PAGE_SIZE * 2]);
+  assert.equal(result.days[0].events.book_detail_viewed, MAX_EVENTS);
+});
+
+test("keys attempts on the proxy's address and stops logging once a caller is limited", async () => {
+  await withStrapi(async (logs) => {
+    process.env.INSIGHTS_EXPORT_TOKEN = TOKEN;
+    const statuses = [];
+    for (let attempt = 0; attempt < 14; attempt += 1) {
+      // The caller rotates X-Forwarded-For (ctx.ip); the proxy's X-Real-IP stays the same.
+      const ctx = createCtx({ authorization: "Bearer guess", ip: `198.51.100.${attempt}` });
+      ctx.request.headers["x-real-ip"] = "203.0.113.99";
+      await controller.insights(ctx);
+      statuses.push(ctx.status);
+    }
+    assert.deepEqual(statuses.slice(0, 10), Array(10).fill(401));
+    assert.deepEqual(statuses.slice(10), Array(4).fill(429));
+    assert.equal(logs.filter(([level]) => level === "warn").length, 10);
   });
 });

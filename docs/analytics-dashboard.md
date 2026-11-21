@@ -86,10 +86,19 @@ It only reads, and it is closed by default:
   mistake in the admin does not expose it.
 - Ten wrong tokens a minute per address are answered, then 429. Valid calls
   are limited to thirty a minute, one at a time.
-- Each export and each refusal is logged with the caller's address.
+- Each export is logged with the caller's address, and refusals are logged
+  until that address reaches its limit. Attempts are counted against
+  `X-Real-IP`, which the platform's proxy sets, rather than the first
+  `X-Forwarded-For` entry, which the caller controls.
 - To revoke access, change or remove the variable and redeploy.
 
 The range defaults to the last 30 days and may cover at most 62.
+
+Events are read a page at a time and summarized as they arrive, so the raw
+events are never held in memory. An export stops at 500,000 events and returns
+`truncated: true`; the newest days are then incomplete. Only books in the
+published catalog are counted per book, because book identifiers arrive from
+the public ingestion endpoint as free text.
 
 For each UTC day it returns active installations (that day, and rolling 7 and
 28 days), listening seconds, event counts by name, active installations by
