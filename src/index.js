@@ -23,6 +23,10 @@ module.exports = {
     );
     if (!hasAnalyticsTable) return;
 
+    // Every export query starts with a time range, so the time alone needs an index too.
+    await connection.raw(
+      "CREATE INDEX IF NOT EXISTS analytics_events_time_idx ON analytics_events (occurred_at)"
+    );
     await connection.raw(
       "CREATE INDEX IF NOT EXISTS analytics_events_name_time_idx ON analytics_events (event_name, occurred_at)"
     );

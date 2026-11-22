@@ -92,19 +92,41 @@ It only reads, and it is closed by default:
   `X-Forwarded-For` entry, which the caller controls.
 - To revoke access, change or remove the variable and redeploy.
 
-The range defaults to the last 30 days and may cover at most 62.
+The range defaults to the last 30 days and may cover at most 124, so one request can
+return everything the retention window still holds.
 
-Events are read a page at a time and summarized as they arrive, so the raw
-events are never held in memory. An export stops at 500,000 events and returns
-`truncated: true`; the newest days are then incomplete. Only books in the
-published catalog are counted per book, because book identifiers arrive from
-the public ingestion endpoint as free text.
+Postgres does the counting. The export runs a fixed set of grouped queries in one read-only
+transaction (UTC, 50 second statement timeout), so raw events are never read into memory and
+there is no event budget: the answer grows with the number of days and distinct labels, not
+with how many events the app sent. Unit tests run against a real database when
+`TEST_DATABASE_URL` is set (see `test/analytics-insights-db.test.js`).
 
-For each UTC day it returns active installations (that day, and rolling 7 and
-28 days), listening seconds, event counts by name, active installations by
-platform and the ten most used books. It also returns the published book count
-and the lifetime counter totals. Installation hashes are used to count
-distinct installations and are never part of the response.
+For each UTC day it returns:
+
+- `activeInstallations`, `activeInstallations7d`, `activeInstallations28d` (distinct
+  installations that day and over the 7 and 28 days ending on it) and `newInstallations`
+  (installations first seen that day in the events still retained; after the retention
+  window passes, an installation that returns later counts as new again).
+- `events`: the count of every event name, plus `listeningSeconds`, `audioResumes` and
+  `searchesWithoutResults`.
+- `platforms` and `appVersions`: distinct installations.
+- `surfaces`, `mediaSources`, `contentTypes`, `outcomes` and `reasons`: event counts by each
+  value, as `{ value: { eventName: count } }`.
+- `progress`: audio and eBook progress milestones, `{ eventName: { percent: count } }`.
+- `devotionals`: views and engagement per devotional.
+- `books`: every published book that had activity, with views, audio starts and completions,
+  eBook opens and completions, downloads, purchase clicks, bookmarks and listening seconds.
+  `topBooks` repeats the first ten in the older, shorter shape.
+
+Top-level fields: `schemaVersion` (2), `generatedAt`, `from`, `to`, `retentionDays` and
+`catalog` (published book count and the lifetime counter totals). Installation hashes are
+used to count distinct installations and are never part of the response.
+
+Free-text fields come from a public endpoint, so they are limited before they leave: only
+published book identifiers are reported, `appVersion` and `sourceSurface` must look like a
+short plain label, `devotionalId` like a plain identifier, and a day reports at most 30
+distinct values of a free-text field (25 devotionals). Events with other values still count
+toward the day's totals.
 
 ## Privacy contract
 

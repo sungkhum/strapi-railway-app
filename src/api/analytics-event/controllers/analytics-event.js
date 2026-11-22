@@ -149,7 +149,7 @@ module.exports = {
       throw error;
     }
 
-    // One export at a time: each loads weeks of events into memory.
+    // One export at a time: each runs grouped queries over every retained event.
     exporting = true;
     try {
       ctx.body = await loadInsights(strapi, range);
