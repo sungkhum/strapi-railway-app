@@ -2,16 +2,15 @@
 
 const crypto = require("node:crypto");
 
-const ANALYTICS_EVENT_UID = "api::analytics-event.analytics-event";
+const { readInsightRows } = require("./insights-queries");
+
 const BOOK_UID = "api::book.book";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const MAX_RANGE_DAYS = 62;
+/** Retention defaults to 90 days, so one request can cover everything the backend still holds. */
+const MAX_RANGE_DAYS = 124;
 /** Rolling 28-day counts need the 27 days before the first reported day. */
 const ROLLING_LOOKBACK_DAYS = 27;
-const PAGE_SIZE = 10000;
-/** Past this many events the export stops and says so, rather than strain the service. */
-const MAX_EVENTS = 500000;
 const TOP_BOOKS_PER_DAY = 10;
 
 class InsightsRangeError extends Error {}
@@ -81,103 +80,192 @@ const eachDay = (from, to) => {
   return days;
 };
 
-/**
- * Builds one summary per UTC day from events fed one at a time, so the export never holds
- * the raw events in memory. Only counts come out: installation hashes are used to count
- * distinct installations and are never returned.
- *
- * Book identifiers arrive from a public endpoint as free text, so only identifiers of
- * published books are counted. Anything else could be used to plant arbitrary text.
- */
-const createAggregator = (books, { from, to }) => {
-  const titles = new Map(books.map((book) => [book.documentId, book.title]));
-  const installsByDay = new Map();
-  const perDay = new Map(
-    eachDay(from, to).map((date) => [
-      date,
-      { events: {}, listeningSeconds: 0, platforms: new Map(), books: new Map() },
-    ])
-  );
-
-  const add = (event) => {
-    const date = isoDay(event.occurredAt);
-    const hash = event.installationIdHash;
-    if (hash) {
-      if (!installsByDay.has(date)) installsByDay.set(date, new Set());
-      installsByDay.get(date).add(hash);
-    }
-
-    const day = perDay.get(date);
-    if (!day) return;
-    day.events[event.eventName] = (day.events[event.eventName] || 0) + 1;
-    if (event.eventName === "audio_play_ended") {
-      day.listeningSeconds += asNumber(event.activeSeconds);
-    }
-    if (hash) {
-      const platform = event.platform || "unknown";
-      if (!day.platforms.has(platform)) day.platforms.set(platform, new Set());
-      day.platforms.get(platform).add(hash);
-    }
-
-    const bookId = event.bookDocumentId;
-    if (!bookId || !titles.has(bookId)) return;
-    const book = day.books.get(bookId) || {
-      documentId: bookId,
-      views: 0,
-      audioStarts: 0,
-      ebookOpens: 0,
-    };
-    if (event.eventName === "book_detail_viewed") book.views += 1;
-    else if (event.eventName === "audio_play_started") book.audioStarts += 1;
-    else if (event.eventName === "ebook_opened") book.ebookOpens += 1;
-    else return;
-    day.books.set(bookId, book);
-  };
-
-  const distinctOver = (date, span) => {
-    const seen = new Set();
-    for (let offset = 0; offset < span; offset += 1) {
-      const installs = installsByDay.get(addDays(date, -offset));
-      if (installs) installs.forEach((hash) => seen.add(hash));
-    }
-    return seen.size;
-  };
-
-  const finish = () =>
-    Array.from(perDay.entries()).map(([date, day]) => ({
-      date,
-      activeInstallations: installsByDay.get(date)?.size || 0,
-      activeInstallations7d: distinctOver(date, 7),
-      activeInstallations28d: distinctOver(date, 28),
-      listeningSeconds: Math.round(day.listeningSeconds),
-      events: day.events,
-      platforms: Object.fromEntries(
-        Array.from(day.platforms.entries()).map(([platform, installs]) => [
-          platform,
-          installs.size,
-        ])
-      ),
-      topBooks: Array.from(day.books.values())
-        .sort(
-          (left, right) =>
-            right.views + right.audioStarts + right.ebookOpens -
-              (left.views + left.audioStarts + left.ebookOpens) ||
-            left.documentId.localeCompare(right.documentId)
-        )
-        .slice(0, TOP_BOOKS_PER_DAY)
-        .map((book) => ({
-          ...book,
-          title: titles.get(book.documentId) || "Untitled book",
-        })),
-    }));
-
-  return { add, finish };
+/** The per-book counter each event adds to. Everything else about a book stays out. */
+const BOOK_COUNTERS = {
+  book_detail_viewed: "views",
+  audio_play_started: "audioStarts",
+  audio_completed: "audioCompletions",
+  ebook_opened: "ebookOpens",
+  ebook_completed: "ebookCompletions",
+  book_download_completed: "downloads",
+  purchase_link_opened: "purchaseClicks",
+  bookmark_created: "bookmarks",
 };
 
-const aggregateInsights = (events, books, range) => {
-  const aggregator = createAggregator(books, range);
-  events.forEach(aggregator.add);
-  return aggregator.finish();
+const emptyBook = (documentId, title) => ({
+  documentId,
+  title,
+  views: 0,
+  audioStarts: 0,
+  audioCompletions: 0,
+  ebookOpens: 0,
+  ebookCompletions: 0,
+  downloads: 0,
+  purchaseClicks: 0,
+  bookmarks: 0,
+  listeningSeconds: 0,
+});
+
+const bookActivity = (book) =>
+  book.views +
+  book.audioStarts +
+  book.audioCompletions +
+  book.ebookOpens +
+  book.ebookCompletions +
+  book.downloads +
+  book.purchaseClicks +
+  book.bookmarks;
+
+/** Adds `count` to `target[outer][inner]`, creating the levels as needed. */
+const nest = (target, outer, inner, count) => {
+  const level = target[outer] || (target[outer] = {});
+  level[inner] = (level[inner] || 0) + count;
+};
+
+/**
+ * Turns the database's grouped counts into one summary per UTC day. Only counts come out:
+ * installation hashes are used by the database to count distinct installations and are
+ * never returned.
+ *
+ * Book identifiers arrive from a public endpoint as free text, so only identifiers of
+ * published books are reported. Other free-text fields are limited by the queries to
+ * short, plain labels and to the most used values of each day.
+ */
+const assembleDays = (rows, books, { from, to }) => {
+  const titles = new Map(books.map((book) => [book.documentId, book.title]));
+  const days = new Map(
+    eachDay(from, to).map((date) => [
+      date,
+      {
+        date,
+        activeInstallations: 0,
+        activeInstallations7d: 0,
+        activeInstallations28d: 0,
+        newInstallations: 0,
+        listeningSeconds: 0,
+        audioResumes: 0,
+        searchesWithoutResults: 0,
+        events: {},
+        platforms: {},
+        appVersions: {},
+        surfaces: {},
+        mediaSources: {},
+        contentTypes: {},
+        outcomes: {},
+        reasons: {},
+        progress: {},
+        devotionals: {},
+        books: new Map(),
+      },
+    ])
+  );
+  const forDay = (date) => days.get(isoDay(date));
+
+  for (const row of rows.events) {
+    const day = forDay(row.day);
+    if (!day) continue;
+    day.events[row.event_name] = asNumber(row.count);
+    if (row.event_name === "audio_play_ended") {
+      day.listeningSeconds = Math.round(asNumber(row.seconds));
+    }
+    if (row.event_name === "audio_play_started") {
+      day.audioResumes = asNumber(row.resumes);
+    }
+    if (row.event_name === "search_performed") {
+      day.searchesWithoutResults = asNumber(row.zero_results);
+    }
+  }
+
+  for (const row of rows.installs) {
+    const day = forDay(row.day);
+    if (!day) continue;
+    day.activeInstallations = asNumber(row.today);
+    day.activeInstallations7d = asNumber(row.week);
+    day.activeInstallations28d = asNumber(row.month);
+  }
+
+  for (const row of rows.newInstalls) {
+    const day = forDay(row.day);
+    if (day) day.newInstallations = asNumber(row.count);
+  }
+
+  for (const row of rows.platforms) {
+    const day = forDay(row.day);
+    if (day) day.platforms[row.label] = asNumber(row.count);
+  }
+
+  for (const row of rows.appVersions) {
+    const day = forDay(row.day);
+    if (day) day.appVersions[row.label] = asNumber(row.count);
+  }
+
+  for (const [key, field] of [
+    ["surfaces", "surfaces"],
+    ["mediaSources", "mediaSources"],
+    ["contentTypes", "contentTypes"],
+    ["outcomes", "outcomes"],
+    ["reasons", "reasons"],
+  ]) {
+    for (const row of rows[key]) {
+      const day = forDay(row.day);
+      if (day) nest(day[field], row.label, row.event_name, asNumber(row.count));
+    }
+  }
+
+  for (const row of rows.progress) {
+    const day = forDay(row.day);
+    if (day) nest(day.progress, row.event_name, String(row.progress_percent), asNumber(row.count));
+  }
+
+  for (const row of rows.devotionals) {
+    const day = forDay(row.day);
+    if (!day) continue;
+    const entry = day.devotionals[row.label] || { id: row.label, views: 0, engagements: 0 };
+    if (row.event_name === "devotional_viewed") entry.views += asNumber(row.count);
+    else if (row.event_name === "devotional_engaged") entry.engagements += asNumber(row.count);
+    day.devotionals[row.label] = entry;
+  }
+
+  for (const row of rows.bookEvents) {
+    const day = forDay(row.day);
+    if (!day || !titles.has(row.book_document_id)) continue;
+    const book =
+      day.books.get(row.book_document_id) ||
+      emptyBook(row.book_document_id, titles.get(row.book_document_id) || "Untitled book");
+    if (row.event_name === "audio_play_ended") {
+      book.listeningSeconds += Math.round(asNumber(row.seconds));
+    } else if (BOOK_COUNTERS[row.event_name]) {
+      book[BOOK_COUNTERS[row.event_name]] += asNumber(row.count);
+    }
+    day.books.set(row.book_document_id, book);
+  }
+
+  return Array.from(days.values()).map((day) => {
+    const sorted = Array.from(day.books.values()).sort(
+      (left, right) =>
+        bookActivity(right) - bookActivity(left) ||
+        right.listeningSeconds - left.listeningSeconds ||
+        left.documentId.localeCompare(right.documentId)
+    );
+    const { books: _books, devotionals, ...rest } = day;
+    return {
+      ...rest,
+      devotionals: Object.values(devotionals).sort(
+        (left, right) =>
+          right.views + right.engagements - (left.views + left.engagements) ||
+          left.id.localeCompare(right.id)
+      ),
+      books: sorted,
+      // The first ten of `books`, kept for readers written before it listed every book.
+      topBooks: sorted.slice(0, TOP_BOOKS_PER_DAY).map((book) => ({
+        documentId: book.documentId,
+        title: book.title,
+        views: book.views,
+        audioStarts: book.audioStarts,
+        ebookOpens: book.ebookOpens,
+      })),
+    };
+  });
 };
 
 const summarizeCatalog = (books) => ({
@@ -194,67 +282,39 @@ const summarizeCatalog = (books) => ({
 });
 
 /**
- * Feeds the window's events to `onEvent` a page at a time, walking the primary key so each
- * page is a short indexed read. Returns whether it stopped early at the event budget.
+ * The read-only summary served to the reporting dashboard. Counting happens inside the
+ * database, so the number of events behind a range never limits or slows what is returned.
  */
-const streamEvents = async (strapi, since, until, onEvent) => {
-  let lastId = 0;
-  let seen = 0;
-  for (;;) {
-    const page = await strapi.db.query(ANALYTICS_EVENT_UID).findMany({
-      where: { occurredAt: { $gte: since, $lt: until }, id: { $gt: lastId } },
-      select: [
-        "id",
-        "eventName",
-        "installationIdHash",
-        "occurredAt",
-        "bookDocumentId",
-        "activeSeconds",
-        "platform",
-      ],
-      orderBy: { id: "asc" },
-      limit: PAGE_SIZE,
-    });
-    page.forEach(onEvent);
-    seen += page.length;
-    if (page.length < PAGE_SIZE) return false;
-    if (seen >= MAX_EVENTS) return true;
-    lastId = page[page.length - 1].id;
-  }
-};
-
-/** The read-only summary served to the reporting dashboard. */
 const loadInsights = async (strapi, range, now = new Date()) => {
-  const since = `${addDays(range.from, -ROLLING_LOOKBACK_DAYS)}T00:00:00.000Z`;
-  const until = `${addDays(range.to, 1)}T00:00:00.000Z`;
   const books = await strapi.documents(BOOK_UID).findMany({
     status: "published",
     fields: ["title", "views", "audio_plays", "book_opens", "downloads"],
   });
-  const aggregator = createAggregator(books, range);
-  const truncated = await streamEvents(strapi, since, until, aggregator.add);
+  const rows = await readInsightRows(strapi.db.connection, {
+    since: `${addDays(range.from, -ROLLING_LOOKBACK_DAYS)}T00:00:00.000Z`,
+    from: `${range.from}T00:00:00.000Z`,
+    until: `${addDays(range.to, 1)}T00:00:00.000Z`,
+    bookIds: books.map((book) => book.documentId),
+  });
 
   return {
     generatedAt: now.toISOString(),
+    schemaVersion: 2,
     from: range.from,
     to: range.to,
     retentionDays: Math.max(
       Number(process.env.ANALYTICS_RETENTION_DAYS) || 90,
       31
     ),
-    // True when the event budget was reached: the newest days are then incomplete.
-    truncated,
-    days: aggregator.finish(),
+    days: assembleDays(rows, books, range),
     catalog: summarizeCatalog(books),
   };
 };
 
 module.exports = {
   InsightsRangeError,
-  MAX_EVENTS,
   MAX_RANGE_DAYS,
-  PAGE_SIZE,
-  aggregateInsights,
+  assembleDays,
   bearerToken,
   exportToken,
   loadInsights,

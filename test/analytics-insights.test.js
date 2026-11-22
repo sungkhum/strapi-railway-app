@@ -5,91 +5,124 @@ const test = require("node:test");
 
 const {
   InsightsRangeError,
-  aggregateInsights,
+  assembleDays,
   bearerToken,
-  MAX_EVENTS,
-  PAGE_SIZE,
   loadInsights,
   parseRange,
   tokenMatches,
 } = require("../src/api/analytics-event/utils/insights");
 
-const event = (overrides) => ({
-  eventName: "book_detail_viewed",
-  installationIdHash: "install-a",
-  occurredAt: "2026-11-10T08:00:00.000Z",
-  platform: "android",
-  ...overrides,
+/** The grouped rows the database returns, with every group empty unless a test fills it. */
+const emptyRows = (rows = {}) => ({
+  events: [],
+  installs: [],
+  newInstalls: [],
+  platforms: [],
+  appVersions: [],
+  surfaces: [],
+  mediaSources: [],
+  contentTypes: [],
+  outcomes: [],
+  reasons: [],
+  progress: [],
+  devotionals: [],
+  bookEvents: [],
+  ...rows,
 });
+
+/** A knex-like connection whose transaction answers each query with the given rows. */
+const fakeConnection = (answer = () => []) => {
+  const statements = [];
+  return {
+    statements,
+    async transaction(run) {
+      return run({
+        async raw(sql, bindings) {
+          statements.push({ sql, bindings });
+          return { rows: answer(sql, bindings) };
+        },
+      });
+    },
+  };
+};
 
 const books = [
   { documentId: "book-a", title: "Book A", views: "100", audio_plays: "20", book_opens: 7, downloads: 3 },
   { documentId: "book-b", title: "Book B", views: 40, audio_plays: 0, book_opens: 1, downloads: 0 },
 ];
 
-test("summarizes each day without exposing installation hashes", () => {
-  const days = aggregateInsights(
-    [
-      event({ bookDocumentId: "book-a" }),
-      event({ bookDocumentId: "book-a", installationIdHash: "install-b", platform: "ios" }),
-      event({ eventName: "audio_play_started", bookDocumentId: "book-b" }),
-      event({ eventName: "audio_play_ended", activeSeconds: "125.4" }),
-      event({ eventName: "audio_play_ended", activeSeconds: 60, occurredAt: "2026-11-11T01:00:00.000Z" }),
-    ],
+test("assembles a day's counts, books and breakdowns without installation hashes", () => {
+  const days = assembleDays(
+    emptyRows({
+      events: [
+        { day: "2026-11-10", event_name: "book_detail_viewed", count: 2, seconds: 0, resumes: 0, zero_results: 0 },
+        { day: "2026-11-10", event_name: "audio_play_ended", count: 2, seconds: 185.4, resumes: 0, zero_results: 0 },
+        { day: "2026-11-10", event_name: "audio_play_started", count: 3, seconds: 0, resumes: 1, zero_results: 0 },
+        { day: "2026-11-10", event_name: "search_performed", count: 4, seconds: 0, resumes: 0, zero_results: 1 },
+        { day: "2026-11-11", event_name: "audio_play_ended", count: 1, seconds: 60, resumes: 0, zero_results: 0 },
+      ],
+      installs: [{ day: "2026-11-10", today: 2, week: 3, month: 5 }],
+      newInstalls: [{ day: "2026-11-10", count: 1 }],
+      platforms: [
+        { day: "2026-11-10", label: "android", count: 1 },
+        { day: "2026-11-10", label: "ios", count: 1 },
+      ],
+      appVersions: [{ day: "2026-11-10", label: "1.4.2", count: 2 }],
+      surfaces: [{ day: "2026-11-10", label: "home", event_name: "book_detail_viewed", count: 2 }],
+      progress: [{ day: "2026-11-10", event_name: "audio_progress_reached", progress_percent: 50, count: 3 }],
+      devotionals: [
+        { day: "2026-11-10", label: "d-1", event_name: "devotional_viewed", count: 2 },
+        { day: "2026-11-10", label: "d-1", event_name: "devotional_engaged", count: 1 },
+      ],
+      bookEvents: [
+        { day: "2026-11-10", book_document_id: "book-b", event_name: "audio_play_started", count: 1, seconds: 0 },
+        { day: "2026-11-10", book_document_id: "book-a", event_name: "book_detail_viewed", count: 2, seconds: 0 },
+        { day: "2026-11-10", book_document_id: "book-a", event_name: "audio_play_ended", count: 1, seconds: 125.4 },
+        { day: "2026-11-10", book_document_id: "planted", event_name: "book_detail_viewed", count: 50, seconds: 0 },
+      ],
+    }),
     books,
     { from: "2026-11-10", to: "2026-11-11" }
   );
 
   assert.equal(days.length, 2);
-  assert.deepEqual(days[0], {
-    date: "2026-11-10",
-    activeInstallations: 2,
-    activeInstallations7d: 2,
-    activeInstallations28d: 2,
-    listeningSeconds: 125,
-    events: { book_detail_viewed: 2, audio_play_started: 1, audio_play_ended: 1 },
-    platforms: { android: 1, ios: 1 },
-    topBooks: [
-      { documentId: "book-a", views: 2, audioStarts: 0, ebookOpens: 0, title: "Book A" },
-      { documentId: "book-b", views: 0, audioStarts: 1, ebookOpens: 0, title: "Book B" },
-    ],
-  });
-  assert.equal(days[1].activeInstallations, 1);
-  assert.equal(days[1].listeningSeconds, 60);
-  assert.equal(JSON.stringify(days).includes("install-"), false);
-});
-
-test("counts rolling installations from days before the reported range", () => {
-  const days = aggregateInsights(
-    [
-      event({ installationIdHash: "old", occurredAt: "2026-10-20T00:00:00.000Z" }),
-      event({ installationIdHash: "recent", occurredAt: "2026-11-06T00:00:00.000Z" }),
-      event({ installationIdHash: "today", occurredAt: "2026-11-10T00:00:00.000Z" }),
-      event({ installationIdHash: "too-old", occurredAt: "2026-10-13T23:59:00.000Z" }),
-    ],
-    books,
-    { from: "2026-11-10", to: "2026-11-10" }
-  );
-
-  assert.equal(days.length, 1);
-  assert.equal(days[0].activeInstallations, 1);
-  assert.equal(days[0].activeInstallations7d, 2);
-  assert.equal(days[0].activeInstallations28d, 3);
-  assert.deepEqual(days[0].events, { book_detail_viewed: 1 });
+  const [first, second] = days;
+  assert.equal(first.activeInstallations, 2);
+  assert.equal(first.activeInstallations7d, 3);
+  assert.equal(first.activeInstallations28d, 5);
+  assert.equal(first.newInstallations, 1);
+  assert.equal(first.listeningSeconds, 185);
+  assert.equal(first.audioResumes, 1);
+  assert.equal(first.searchesWithoutResults, 1);
+  assert.deepEqual(first.platforms, { android: 1, ios: 1 });
+  assert.deepEqual(first.appVersions, { "1.4.2": 2 });
+  assert.deepEqual(first.surfaces, { home: { book_detail_viewed: 2 } });
+  assert.deepEqual(first.progress, { audio_progress_reached: { 50: 3 } });
+  assert.deepEqual(first.devotionals, [{ id: "d-1", views: 2, engagements: 1 }]);
+  assert.deepEqual(first.books.map((book) => [book.documentId, book.title, book.views, book.audioStarts, book.listeningSeconds]), [
+    ["book-a", "Book A", 2, 0, 125],
+    ["book-b", "Book B", 0, 1, 0],
+  ]);
+  assert.deepEqual(first.topBooks[0], { documentId: "book-a", title: "Book A", views: 2, audioStarts: 0, ebookOpens: 0 });
+  assert.equal(second.listeningSeconds, 60);
+  assert.equal(JSON.stringify(days).includes("planted"), false);
 });
 
 test("reports quiet days as zeros so the dashboard sees no gap", () => {
-  const [day] = aggregateInsights([], books, { from: "2026-11-10", to: "2026-11-10" });
-  assert.deepEqual(day, {
-    date: "2026-11-10",
-    activeInstallations: 0,
-    activeInstallations7d: 0,
-    activeInstallations28d: 0,
-    listeningSeconds: 0,
-    events: {},
-    platforms: {},
-    topBooks: [],
-  });
+  const [day] = assembleDays(emptyRows(), books, { from: "2026-11-10", to: "2026-11-10" });
+  assert.equal(day.activeInstallations, 0);
+  assert.deepEqual(day.events, {});
+  assert.deepEqual(day.books, []);
+  assert.deepEqual(day.devotionals, []);
+});
+
+test("ignores rows outside the reported range", () => {
+  const days = assembleDays(
+    emptyRows({ events: [{ day: "2026-11-09", event_name: "book_detail_viewed", count: 9, seconds: 0, resumes: 0, zero_results: 0 }] }),
+    books,
+    { from: "2026-11-10", to: "2026-11-10" }
+  );
+  assert.deepEqual(days[0].events, {});
 });
 
 test("defaults to the last 30 days and rejects bad ranges", () => {
@@ -113,21 +146,10 @@ test("accepts only the exact bearer token", () => {
   assert.equal(tokenMatches("abc123", ""), false);
 });
 
-test("loads the lookback window, pages through events and totals the catalog", async () => {
-  const queries = [];
+test("reads the lookback window in one read-only transaction and totals the catalog", async () => {
+  const connection = fakeConnection();
   const strapi = {
-    db: {
-      query(uid) {
-        assert.equal(uid, "api::analytics-event.analytics-event");
-        return {
-          async findMany(params) {
-            queries.push(params);
-            assert.equal(params.select.includes("eventId"), false);
-            return [{ id: 7, ...event({ bookDocumentId: "book-a" }) }];
-          },
-        };
-      },
-    },
+    db: { connection },
     documents(uid) {
       assert.equal(uid, "api::book.book");
       return {
@@ -141,14 +163,21 @@ test("loads the lookback window, pages through events and totals the catalog", a
 
   const result = await loadInsights(strapi, { from: "2026-11-10", to: "2026-11-10" }, new Date("2026-11-20T10:00:00.000Z"));
 
-  assert.equal(queries.length, 1);
-  assert.deepEqual(queries[0].where, {
-    occurredAt: { $gte: "2026-10-14T00:00:00.000Z", $lt: "2026-11-11T00:00:00.000Z" },
-    id: { $gt: 0 },
-  });
-  assert.deepEqual(queries[0].orderBy, { id: "asc" });
-  assert.equal(result.truncated, false);
-  assert.equal(result.days[0].activeInstallations, 1);
+  assert.match(connection.statements[0].sql, /READ ONLY/);
+  assert.match(connection.statements[1].sql, /TIME ZONE 'UTC'/);
+  assert.match(connection.statements[2].sql, /statement_timeout/);
+  const installs = connection.statements.find(({ sql }) => sql.includes("generate_series"));
+  assert.deepEqual(installs.bindings, [
+    "2026-10-14T00:00:00.000Z",
+    "2026-11-11T00:00:00.000Z",
+    "2026-11-10T00:00:00.000Z",
+    "2026-11-11T00:00:00.000Z",
+  ]);
+  const bookQuery = connection.statements.find(({ sql }) => sql.includes("book_document_id IN"));
+  assert.equal(bookQuery.bindings[3], JSON.stringify(["book-a", "book-b"]));
+  assert.equal("truncated" in result, false);
+  assert.equal(result.schemaVersion, 2);
+  assert.equal(result.days[0].activeInstallations, 0);
   assert.deepEqual(result.catalog, {
     publishedBooks: 2,
     lifetime: { views: 140, audioPlays: 20, bookOpens: 8, downloads: 3 },
@@ -199,13 +228,13 @@ const withStrapi = async (run, { failing = false, onLoad } = {}) => {
       error: (message) => logs.push(["error", message]),
     },
     db: {
-      query: () => ({
-        async findMany() {
+      connection: {
+        async transaction(run) {
           if (onLoad) await onLoad();
           if (failing) throw new Error("database is down");
-          return [];
+          return run({ raw: async () => ({ rows: [] }) });
         },
-      }),
+      },
     },
     documents: () => ({ findMany: async () => [] }),
   };
@@ -291,7 +320,7 @@ test("serves a valid caller, validates the range and logs the export", async () 
     await controller.insights(ok);
     assert.equal(ok.status, 200);
     assert.equal(ok.headers["X-Content-Type-Options"], "nosniff");
-    assert.deepEqual(Object.keys(ok.body).sort(), ["catalog", "days", "from", "generatedAt", "retentionDays", "to", "truncated"]);
+    assert.deepEqual(Object.keys(ok.body).sort(), ["catalog", "days", "from", "generatedAt", "retentionDays", "schemaVersion", "to"]);
     assert.ok(logs.some(([level, message]) => level === "info" && message.includes("2026-11-01..2026-11-01")));
   });
 });
@@ -336,46 +365,6 @@ test("runs one export at a time and recovers after a failure", async () => {
     await controller.insights(after);
     assert.equal(after.status, 200);
   });
-});
-
-test("counts only published books, so free text from the public endpoint never reaches the export", () => {
-  const planted = "someone@example.com";
-  const events = [];
-  for (let index = 0; index < 50; index += 1) events.push(event({ bookDocumentId: planted }));
-  events.push(event({ bookDocumentId: "book-a" }));
-  const [day] = aggregateInsights(events, books, { from: "2026-11-10", to: "2026-11-10" });
-
-  assert.deepEqual(day.topBooks, [
-    { documentId: "book-a", views: 1, audioStarts: 0, ebookOpens: 0, title: "Book A" },
-  ]);
-  assert.equal(JSON.stringify(day).includes(planted), false);
-  // The events themselves still count toward the day's totals.
-  assert.equal(day.events.book_detail_viewed, 51);
-});
-
-test("walks the events by primary key and stops at the event budget", async () => {
-  const wheres = [];
-  let nextId = 1;
-  const strapi = {
-    db: {
-      query: () => ({
-        async findMany(params) {
-          wheres.push(params.where.id.$gt);
-          assert.equal(params.limit, PAGE_SIZE);
-          assert.equal(params.offset, undefined);
-          return Array.from({ length: PAGE_SIZE }, () => ({ id: nextId++, ...event() }));
-        },
-      }),
-    },
-    documents: () => ({ findMany: async () => books }),
-  };
-
-  const result = await loadInsights(strapi, { from: "2026-11-10", to: "2026-11-10" });
-
-  assert.equal(result.truncated, true);
-  assert.equal(wheres.length, MAX_EVENTS / PAGE_SIZE);
-  assert.deepEqual(wheres.slice(0, 3), [0, PAGE_SIZE, PAGE_SIZE * 2]);
-  assert.equal(result.days[0].events.book_detail_viewed, MAX_EVENTS);
 });
 
 test("keys attempts on the proxy's address and stops logging once a caller is limited", async () => {
