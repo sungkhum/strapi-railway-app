@@ -268,6 +268,20 @@ const assembleDays = (rows, books, { from, to }) => {
   });
 };
 
+/** Each published book's lifetime counters, busiest first, so the dashboard can rank books. */
+const bookCounters = (books) =>
+  books
+    .map((book) => ({
+      documentId: book.documentId,
+      title: book.title,
+      views: asNumber(book.views),
+      audioPlays: asNumber(book.audio_plays),
+      bookOpens: asNumber(book.book_opens),
+      downloads: asNumber(book.downloads),
+    }))
+    .filter((book) => book.views || book.audioPlays || book.bookOpens || book.downloads)
+    .sort((left, right) => right.views - left.views || left.documentId.localeCompare(right.documentId));
+
 const summarizeCatalog = (books) => ({
   publishedBooks: books.length,
   lifetime: books.reduce(
@@ -279,6 +293,7 @@ const summarizeCatalog = (books) => ({
     }),
     { views: 0, audioPlays: 0, bookOpens: 0, downloads: 0 }
   ),
+  books: bookCounters(books),
 });
 
 /**

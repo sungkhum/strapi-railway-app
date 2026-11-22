@@ -181,6 +181,10 @@ test("reads the lookback window in one read-only transaction and totals the cata
   assert.deepEqual(result.catalog, {
     publishedBooks: 2,
     lifetime: { views: 140, audioPlays: 20, bookOpens: 8, downloads: 3 },
+    books: [
+      { documentId: "book-a", title: "Book A", views: 100, audioPlays: 20, bookOpens: 7, downloads: 3 },
+      { documentId: "book-b", title: "Book B", views: 40, audioPlays: 0, bookOpens: 1, downloads: 0 },
+    ],
   });
 });
 

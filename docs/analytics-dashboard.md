@@ -119,7 +119,8 @@ For each UTC day it returns:
   `topBooks` repeats the first ten in the older, shorter shape.
 
 Top-level fields: `schemaVersion` (2), `generatedAt`, `from`, `to`, `retentionDays` and
-`catalog` (published book count and the lifetime counter totals). Installation hashes are
+`catalog` (published book count, the lifetime counter totals, and `books`: each published
+book with any count, its title and its four lifetime counters, most viewed first). Installation hashes are
 used to count distinct installations and are never part of the response.
 
 Free-text fields come from a public endpoint, so they are limited before they leave: only
