@@ -268,6 +268,13 @@ const assembleDays = (rows, books, { from, to }) => {
   });
 };
 
+const webCounters = (book) => ({
+  views: asNumber(book.web_views),
+  audioPlays: asNumber(book.web_audio_plays),
+  bookOpens: asNumber(book.web_book_opens),
+  downloads: asNumber(book.web_downloads),
+});
+
 /** Each published book's lifetime counters, busiest first, so the dashboard can rank books. */
 const bookCounters = (books) =>
   books
@@ -278,6 +285,8 @@ const bookCounters = (books) =>
       audioPlays: asNumber(book.audio_plays),
       bookOpens: asNumber(book.book_opens),
       downloads: asNumber(book.downloads),
+      // The share of each counter that came from the PlovPit website. The rest came from the app.
+      web: webCounters(book),
     }))
     .filter((book) => book.views || book.audioPlays || book.bookOpens || book.downloads)
     .sort((left, right) => right.views - left.views || left.documentId.localeCompare(right.documentId));
@@ -290,8 +299,11 @@ const summarizeCatalog = (books) => ({
       audioPlays: totals.audioPlays + asNumber(book.audio_plays),
       bookOpens: totals.bookOpens + asNumber(book.book_opens),
       downloads: totals.downloads + asNumber(book.downloads),
+      web: Object.fromEntries(
+        Object.entries(webCounters(book)).map(([key, value]) => [key, totals.web[key] + value])
+      ),
     }),
-    { views: 0, audioPlays: 0, bookOpens: 0, downloads: 0 }
+    { views: 0, audioPlays: 0, bookOpens: 0, downloads: 0, web: { views: 0, audioPlays: 0, bookOpens: 0, downloads: 0 } }
   ),
   books: bookCounters(books),
 });
@@ -303,7 +315,10 @@ const summarizeCatalog = (books) => ({
 const loadInsights = async (strapi, range, now = new Date()) => {
   const books = await strapi.documents(BOOK_UID).findMany({
     status: "published",
-    fields: ["title", "views", "audio_plays", "book_opens", "downloads"],
+    fields: [
+      "title", "views", "audio_plays", "book_opens", "downloads",
+      "web_views", "web_audio_plays", "web_book_opens", "web_downloads",
+    ],
   });
   const rows = await readInsightRows(strapi.db.connection, {
     since: `${addDays(range.from, -ROLLING_LOOKBACK_DAYS)}T00:00:00.000Z`,

@@ -16,6 +16,12 @@ Each published book stores four lifetime counters:
 - `book_opens`
 - `downloads`
 
+The PlovPit website calls the same `track-*` endpoints with `?source=web`. Those events
+still count in the four totals, and also in `web_views`, `web_audio_plays`,
+`web_book_opens` and `web_downloads`, so a report can tell the website from the app
+(the app's share is the total minus the website's). The website sends `track-book-open`
+when someone downloads the PDF and `track-download` for "download all audio".
+
 The dashboard reports their totals, their share of all recorded actions, top
 books, category/author/tag rankings, engagement distribution, top-10
 concentration, and action-to-view ratios. It also surfaces books with strong
@@ -120,7 +126,7 @@ For each UTC day it returns:
 
 Top-level fields: `schemaVersion` (2), `generatedAt`, `from`, `to`, `retentionDays` and
 `catalog` (published book count, the lifetime counter totals, and `books`: each published
-book with any count, its title and its four lifetime counters, most viewed first). Installation hashes are
+book with any count, its title and its four lifetime counters, most viewed first; the totals and each book also carry `web`, the website's share of each counter). Installation hashes are
 used to count distinct installations and are never part of the response.
 
 Free-text fields come from a public endpoint, so they are limited before they leave: only

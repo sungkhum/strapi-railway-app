@@ -100,6 +100,26 @@
       "type": "biginteger",
       "private": true,
       "default": "0"
+    },
+    "web_views": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
+    },
+    "web_audio_plays": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
+    },
+    "web_book_opens": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
+    },
+    "web_downloads": {
+      "type": "biginteger",
+      "private": true,
+      "default": "0"
     }
   }
 }
