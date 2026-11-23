@@ -47,7 +47,7 @@ const fakeConnection = (answer = () => []) => {
 };
 
 const books = [
-  { documentId: "book-a", title: "Book A", views: "100", audio_plays: "20", book_opens: 7, downloads: 3 },
+  { documentId: "book-a", title: "Book A", views: "100", audio_plays: "20", book_opens: 7, downloads: 3, web_views: "30", web_audio_plays: 5, web_book_opens: 2, web_downloads: 1 },
   { documentId: "book-b", title: "Book B", views: 40, audio_plays: 0, book_opens: 1, downloads: 0 },
 ];
 
@@ -180,10 +180,10 @@ test("reads the lookback window in one read-only transaction and totals the cata
   assert.equal(result.days[0].activeInstallations, 0);
   assert.deepEqual(result.catalog, {
     publishedBooks: 2,
-    lifetime: { views: 140, audioPlays: 20, bookOpens: 8, downloads: 3 },
+    lifetime: { views: 140, audioPlays: 20, bookOpens: 8, downloads: 3, web: { views: 30, audioPlays: 5, bookOpens: 2, downloads: 1 } },
     books: [
-      { documentId: "book-a", title: "Book A", views: 100, audioPlays: 20, bookOpens: 7, downloads: 3 },
-      { documentId: "book-b", title: "Book B", views: 40, audioPlays: 0, bookOpens: 1, downloads: 0 },
+      { documentId: "book-a", title: "Book A", views: 100, audioPlays: 20, bookOpens: 7, downloads: 3, web: { views: 30, audioPlays: 5, bookOpens: 2, downloads: 1 } },
+      { documentId: "book-b", title: "Book B", views: 40, audioPlays: 0, bookOpens: 1, downloads: 0, web: { views: 0, audioPlays: 0, bookOpens: 0, downloads: 0 } },
     ],
   });
 });
